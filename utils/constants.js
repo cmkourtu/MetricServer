@@ -1,12 +1,5 @@
 // Ad
-const AdFields = [
-    "account_currency",
-    "account_id",
-    "account_name",
-    "adset_name",
-    "adset_id",
-    "campaign_name",
-    "campaign_id",
+const AdInsightsFields = [
     "frequency",
     "impressions",
     "full_view_impressions",
@@ -21,6 +14,7 @@ const AdFields = [
     "date_start",
     "date_stop",
 ];
+const AdFields = ['name', "id"]
 const AdParam = {
     breakdown: "age",
 };
@@ -29,7 +23,7 @@ const AdParam = {
 const UserField = ["id", "name"];
 
 // AdAccount
-const AdAccountField = ["id", "name"];
+const AdAccountField = ["id", "name", "currency"];
 
 // Campaigns
 const CampaignsFields = [
@@ -50,6 +44,38 @@ const CampaignsFields = [
     "date_start",
     "date_stop",
 ];
+const FilterParam = (startDate, endDate, type) => {
+    type = type ? type : "date";
+    if (type.toLowerCase() === "time")
+        return TimeFilterParam(startDate, endDate);
+    else
+        return DailyFilterParam(startDate, endDate);
+};
+const DailyFilterParam = (startDate, endDate) => {
+    const nowDate = new Date(Date.now());
+    startDate = startDate ? startDate : dateMinusMonth(nowDate, 36).toISOString().split("T")[0]
+    endDate = endDate ? endDate : nowDate.toISOString().split("T")[0]
+    return {
+        time_range: {'since': startDate, 'until': endDate}, // Період, за який потрібно отримати статистику
+        time_increment: '1',
+        level: "account",
+    }
+}
+const TimeFilterParam = (startDate, endDate) => {
+    return {
+        ...DailyFilterParam(startDate, endDate),
+        breakdowns: "hourly_stats_aggregated_by_advertiser_time_zone"
+    }
+
+}
+
+function dateMinusMonth(date, month) {
+    date = new Date(date);
+    for (let i = 0; i < month; i++) {
+        date.setMonth(date.getMonth() - 1);
+    }
+    return date;
+}
 
 module.exports = {
     AdFields,
@@ -57,4 +83,6 @@ module.exports = {
     UserField,
     AdAccountField,
     CampaignsFields,
+    FilterParam,
+    AdInsightsFields
 };
