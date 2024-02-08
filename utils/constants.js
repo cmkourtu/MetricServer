@@ -14,7 +14,7 @@ const AdInsightsFields = [
     "date_start",
     "date_stop",
 ];
-const AdFields = ['name', "id"]
+const AdFields = ["name", "id"];
 const AdParam = {
     breakdown: "age",
 };
@@ -44,31 +44,6 @@ const CampaignsFields = [
     "date_start",
     "date_stop",
 ];
-const FilterParam = (startDate, endDate, type) => {
-    type = type ? type : "date";
-    if (type.toLowerCase() === "time")
-        return TimeFilterParam(startDate, endDate);
-    else
-        return DailyFilterParam(startDate, endDate);
-};
-const DailyFilterParam = (startDate, endDate) => {
-    const nowDate = new Date(Date.now());
-    startDate = startDate ? startDate : dateMinusMonth(nowDate, 36).toISOString().split("T")[0]
-    endDate = endDate ? endDate : nowDate.toISOString().split("T")[0]
-    return {
-        time_range: {'since': startDate, 'until': endDate}, // Період, за який потрібно отримати статистику
-        time_increment: '1',
-        level: "account",
-    }
-}
-const TimeFilterParam = (startDate, endDate) => {
-    return {
-        ...DailyFilterParam(startDate, endDate),
-        breakdowns: "hourly_stats_aggregated_by_advertiser_time_zone"
-    }
-
-}
-
 function dateMinusMonth(date, month) {
     date = new Date(date);
     for (let i = 0; i < month; i++) {
@@ -76,6 +51,29 @@ function dateMinusMonth(date, month) {
     }
     return date;
 }
+const DailyFilterParam = (startDate, endDate) => {
+    const nowDate = new Date(Date.now());
+    startDate = startDate ? startDate : dateMinusMonth(nowDate, 36).toISOString().split("T")[0];
+    endDate = endDate ? endDate : nowDate.toISOString().split("T")[0];
+    return {
+        time_range: {"since": startDate, "until": endDate}, // Період, за який потрібно отримати статистику
+        time_increment: "1",
+        level: "account",
+    };
+};
+const TimeFilterParam = (startDate, endDate) => {
+    return {
+        ...DailyFilterParam(startDate, endDate),
+        breakdowns: "hourly_stats_aggregated_by_advertiser_time_zone",
+    };
+};
+const FilterParam = (startDate, endDate, type) => {
+    type = type ? type : "date";
+    if (type.toLowerCase() === "time") {
+        return TimeFilterParam(startDate, endDate);
+    }
+    return DailyFilterParam(startDate, endDate);
+};
 
 module.exports = {
     AdFields,
@@ -84,5 +82,5 @@ module.exports = {
     AdAccountField,
     CampaignsFields,
     FilterParam,
-    AdInsightsFields
+    AdInsightsFields,
 };

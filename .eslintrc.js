@@ -12,6 +12,8 @@ module.exports = {
         impliedStrict: true,
     },
     rules: {
+        "no-unneeded-ternary": "off",
+        "no-plusplus": "off",
         "import/prefer-default-export": 0,
         "no-param-reassign": 0,
         "no-underscore-dangle": 0,

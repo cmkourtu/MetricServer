@@ -5,7 +5,9 @@ const {
     AdParam,
     UserField,
     AdAccountField,
-    CampaignsFields, DailyFilterField, FilterField, FilterParam, AdFields,
+    CampaignsFields,
+    FilterParam,
+    AdFields,
 } = require("../../utils/constants");
 
 class MeteApiService {
@@ -21,58 +23,66 @@ class MeteApiService {
         this.User = bizSdk.User;
         this.AdAccount = bizSdk.AdAccount;
         this.Campaign = bizSdk.Campaign;
-        this.Ad = bizSdk.Ad
+        this.Ad = bizSdk.Ad;
     }
+
     async getAllUserInsights() {
-        return await this.getUserInsightsGroupedByDate();
+        return this.getUserInsightsGroupedByDate();
     }
 
     async getUserInsightsGroupedByDate(startDate, endDate, type) {
         const fieldFilter = FilterParam(startDate, endDate, type);
         const businessAccounts = await this.getUserBusinessAccounts();
 
-        const campaignsInsights = await Promise.all(businessAccounts.map(async account => {
-            const campaigns = await this.getCampaignsWithInsights(account.id, fieldFilter);
-            return { account, campaigns };
-        }));
-
+        const campaignsInsights = await Promise.all(
+            businessAccounts.map(async account => {
+                const campaigns = await this.getCampaignsWithInsights(account.id, fieldFilter);
+                return {account, campaigns};
+            })
+        );
         return campaignsInsights;
     }
 
     async getCampaignsWithInsights(accountId, fieldFilter) {
-        const campaigns = (await new this.AdAccount(accountId).getCampaigns(CampaignsFields))
-            .map(campaign => campaign._data);
+        const campaigns = (await new this.AdAccount(accountId).getCampaigns(CampaignsFields)).map(
+            campaign => campaign._data
+        );
 
-        return Promise.all(campaigns.map(async campaign => {
-            const adSets = await this.getCampaignAdSets(campaign, fieldFilter);
-            return { campaign, adSets };
-        }));
+        return Promise.all(
+            campaigns.map(async campaign => {
+                const adSets = await this.getCampaignAdSets(campaign, fieldFilter);
+                return {campaign, adSets};
+            })
+        );
     }
 
     async getCampaignAdSets(campaign, fieldFilter) {
         const adSets = await new this.Campaign(campaign.id).getAdSets(CampaignsFields);
 
-        return Promise.all(adSets.map(async adSet => {
-            const adSetData = adSet._data;
-            const adsWithInsights = await this.getAdsWithInsights(adSetData.id, fieldFilter);
-            return { adSet: adSetData, ads: adsWithInsights };
-        }));
+        return Promise.all(
+            adSets.map(async adSet => {
+                const adSetData = adSet._data;
+                const adsWithInsights = await this.getAdsWithInsights(adSetData.id, fieldFilter);
+                return {adSet: adSetData, ads: adsWithInsights};
+            })
+        );
     }
 
     async getAdsWithInsights(adSetId, fieldFilter) {
         const ads = await new this.AdSet(adSetId).getAds(AdFields);
 
-        return Promise.all(ads.map(async ad => {
-            const insights = await this.getAdInsights(ad.id, fieldFilter);
-            return { ad: ad._data, insights };
-        }));
+        return Promise.all(
+            ads.map(async ad => {
+                const insights = await this.getAdInsights(ad.id, fieldFilter);
+                return {ad: ad._data, insights};
+            })
+        );
     }
 
     async getAdInsights(adId, fieldFilter) {
         const insights = await new this.Ad(adId).getInsights(AdInsightsFields, fieldFilter);
         return insights.map(insight => insight._data);
     }
-
 
     async getInsightsByAdId(adId) {
         return this.#getInsightsByIdAndFieldsAndParam(adId, AdInsightsFields, AdParam);
@@ -85,7 +95,7 @@ class MeteApiService {
     async getUserBusinessAccounts() {
         try {
             const user = await this.getAuthUser();
-            const businessAccounts = (await new this.User(user.id).getAdAccounts(AdAccountField))
+            const businessAccounts = await new this.User(user.id).getAdAccounts(AdAccountField);
             return businessAccounts.map(acc => acc._data);
         } catch (err) {
             console.error("getUserBusinessAccounts", err);
