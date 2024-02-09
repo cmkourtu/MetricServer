@@ -1,22 +1,35 @@
 const passport = require("passport");
 const FacebookStrategy = require("passport-facebook").Strategy;
 const { User } = require("../models");
+const passportJwt = require("passport-jwt");
+const {SECRET_KEY} = require("./constants");
+const session = require('express-session');
 
 module.exports = function (app) {
+    passport.use(
+        "jwt",
+        new passportJwt.Strategy(
+            {
+                jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderWithScheme("jwt"),
+                secretOrKey: SECRET_KEY,
+                session: false,
+            },
+            (payload, done) => done(null, payload)
+        )
+    );
     passport.use(
         new FacebookStrategy(
             {
                 clientID: process.env.FACEBOOK_APP_ID,
                 clientSecret: process.env.FACEBOOK_APP_SECRET,
                 callbackURL: "api/auth/facebook/callback",
-                scope: ["pages_show_list", "ads_management", "ads_read", "pages_read_engagement"],
+                scope: ["pages_show_list", "ads_management", "ads_read", "pages_read_engagement", "public_profile", "email"],
+                profileFields: ['id', 'displayName', 'email'],
             },
             function (accessToken, refreshToken, profile, done) {
-                console.log({ accessToken, refreshToken, profile, done });
-                // User.findOrCreate({ facebookId: profile.id }, function(err, user) {
-                //     return done(err, user);
-                // });
-                return done(null, null);
+                console.log({accessToken, refreshToken, profile: profile._json});
+
+                return done(null, {accessToken, refreshToken, profile: profile._json});
             }
         )
     );
@@ -30,7 +43,11 @@ module.exports = function (app) {
             done(null, user);
         });
     });
-
+    app.use(session({
+        secret: 'secret', // Секретний ключ для підпису куки сесії
+        resave: false,
+        saveUninitialized: true,
+    }));
     app.use(passport.initialize());
 };
 // const passport = require("passport");

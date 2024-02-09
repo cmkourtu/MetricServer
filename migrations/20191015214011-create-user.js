@@ -31,15 +31,6 @@ module.exports = {
                     allowNull: false,
                     type: DataTypes.DATE,
                 },
-                facebookId: {
-                    type: DataTypes.STRING,
-                },
-                facebookRefreshToken: {
-                    type: DataTypes.STRING,
-                },
-                facebookDisplayName: {
-                    type: DataTypes.STRING,
-                },
             })
             .then(() =>
                 queryInterface.addIndex("Users", [DataTypes.fn("lower", DataTypes.col("email"))], {

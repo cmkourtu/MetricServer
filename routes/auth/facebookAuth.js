@@ -1,23 +1,18 @@
 const passport = require("passport");
-const { Router } = require("express");
-
+const {Router} = require("express");
+const {  addFacebookAccountByCode} = require("../../services/AuthService");
 const router = new Router();
-function requireAuth(req, res, next) {
-    if (req.user) {
-        next();
-    } else {
-        res.redirect("/login");
-    }
-}
 
-router.get('/',
-    passport.authenticate('facebook'));
+router.get('/', passport.authenticate("facebook"))
 
-router.get('/callback',
-    passport.authenticate('facebook'),
-    function(req, res) {
-        // Successful authentication, redirect home.
-        res.redirect('/');
-    });
+router.post('/', passport.authenticate("jwt"), async function (req, res) {
+  const {userId, code} = req.body;
+  const userData = await addFacebookAccountByCode(code); // TODO: and save
+  res.json({userData});
+});
+router.get('/callback', async function (req, res) {
+  const code = req.query.code;
+  res.json({code});
+});
 
 module.exports = router;

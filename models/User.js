@@ -39,15 +39,6 @@ module.exports = (sequelize, DataTypes) => {
             resetPasswordToken: {
                 type: DataTypes.STRING,
             },
-            facebookId: {
-                type: DataTypes.STRING,
-            },
-            facebookRefreshToken: {
-                type: DataTypes.STRING,
-            },
-            facebookDisplayName: {
-                type: DataTypes.STRING,
-            },
             password: {
                 type: DataTypes.VIRTUAL,
                 set(password) {
@@ -63,8 +54,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         {}
     );
-    User.associate = function () {
-        // associations can be defined here
+    User.associate = function (models) {
+        User.belongsToMany(models.FacebookAccounts, {
+            through: 'UserFacebookAccounts',
+            foreignKey: 'userId',
+        });
     };
 
     User.prototype.toJSON = function () {
