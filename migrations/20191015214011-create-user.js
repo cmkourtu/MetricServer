@@ -10,6 +10,7 @@ module.exports = {
         },
         email: {
           type: DataTypes.STRING(50),
+          unique: true,
         },
         refreshToken: {
           type: DataTypes.STRING,

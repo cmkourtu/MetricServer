@@ -10,9 +10,7 @@ module.exports = {
       queryInterface.addColumn('Users', 'companyName', {
         type: Sequelize.STRING,
       }),
-      queryInterface.addColumn('Users', 'jobTitle', {
-        type: Sequelize.STRING,
-      }),
+
     ]);
   },
 
@@ -21,7 +19,6 @@ module.exports = {
       queryInterface.removeColumn('Users', 'firstName'),
       queryInterface.removeColumn('Users', 'lastName'),
       queryInterface.removeColumn('Users', 'companyName'),
-      queryInterface.removeColumn('Users', 'jobTitle'),
     ]);
   },
 };

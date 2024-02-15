@@ -11,7 +11,14 @@ const {
   createAndSaveAuthTokens,
   createAndSaveResetPasswordToken,
 } = require('../helpers/tokens');
-
+const { registerUser } = require('../services/auth-service');
+/**
+ * @typedef {object} UserCreationData
+ * @property {string} email
+ * @property {string} firstName
+ * @property {string} lastName
+ * @property {string} password
+ */
 /**
  * @typedef {object} SentResponseData
  * @property {boolean} sent
@@ -169,5 +176,27 @@ router.post('/reset-password', async (req, res) => {
 
   res.json({ sent: true });
 });
-
+/**
+ * POST /api/register
+ * @summary Register new User
+ * @tags Users
+ * @param {UserCreationData} request.body.required - User registration data
+ * @return {User} 200 - Created User
+ */
+router.post('/register', async (req, res) => {
+  const { email, password, firstName, lastName, companyName } = req.body;
+  const tokenData = await registerUser(
+    email,
+    password,
+    firstName,
+    lastName,
+    companyName,
+    req,
+  );
+  if (typeof tokenData === 'string') {
+    res.status(400).json("Email exist or invalid!");
+  } else {
+    res.status(200).json(tokenData);
+  }
+});
 module.exports = router;

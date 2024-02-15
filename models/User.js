@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      * @property {string} firstName
      * @property {string} lastName
      * @property {string} companyName
-     * @property {string} jobTitle
      * @property {string} createdAt - ISO Date
      * @property {string} updatedAt - ISO Date
      */
@@ -27,7 +26,10 @@ module.exports = (sequelize, DataTypes) => {
             email: {
                 type: DataTypes.STRING(50),
                 validate: {
-                    isEmail: true,
+                    isEmail: {
+                        args: true,
+                        msg: "Invalid email!",
+                    },
                 },
             },
             firstName: {
@@ -37,9 +39,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
             },
             companyName: {
-                type: DataTypes.STRING,
-            },
-            jobTitle: {
                 type: DataTypes.STRING,
             },
             refreshToken: {
@@ -85,7 +84,6 @@ module.exports = (sequelize, DataTypes) => {
         delete values.refreshToken;
         return values;
     };
-
     User.prototype.isEqualPassword = function (password) {
         return encrypt(password, this.encryptionHash) === this.encryptedPassword;
     };
