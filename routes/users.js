@@ -33,7 +33,7 @@ router.post('/', (req, res, next) => {
  * @security JWT
  * @return {Array.<User>} 200 - Users list
  */
-router.get('/', passport.authenticate('jwt'), (req, res, next) => {
+router.get('/', (req, res, next) => {
   User.findAll()
     .then((keys) => res.json(keys))
     .catch(next);
