@@ -12,6 +12,7 @@ const {
   createAndSaveResetPasswordToken,
 } = require('../helpers/tokens');
 const { registerUser } = require('../services/auth-service');
+const {sendResetPassword, sendForgotPassword} = require("../services/email-service");
 /**
  * @typedef {object} UserCreationData
  * @property {string} email
@@ -108,10 +109,11 @@ router.post('/auth-token-refresh', async (req, res) => {
  */
 router.post('/forgot-password', async (req, res) => {
   let user;
+  const email = req.body.email;
   try {
     user = await User.findOne({
       where: {
-        email: req.body.email,
+        email: email,
       },
     });
     // eslint-disable-next-line no-empty
@@ -123,14 +125,12 @@ router.post('/forgot-password', async (req, res) => {
   }
 
   const token = await createAndSaveResetPasswordToken(user);
-  await mailgun.messages.create(MAILGUN_DOMAIN, {
-    from: EMAIL_FROM,
-    to: user.email,
-    subject: 'Reset password for app-name',
-    text: `Follow the link to reset your password: ${FRONT_APP_URL}/reset-password?token=${token}`,
-  });
-
-  res.json({ sent: true });
+  try {
+    await sendForgotPassword( {to: email, token})
+    res.json({ sent: true });
+  } catch (err) {
+    res.status(500).json({ sent: false });
+  }
 });
 
 /**
@@ -166,15 +166,12 @@ router.post('/reset-password', async (req, res) => {
   const password = passwordGenerator.generate();
   user.password = password;
   await user.save(user);
-
-  await mailgun.messages.create(MAILGUN_DOMAIN, {
-    from: EMAIL_FROM,
-    to: user.email,
-    subject: 'Your new password for app-name',
-    text: `Your new password is: ${password}\nUse it for login ${FRONT_APP_URL}/login`,
-  });
-
-  res.json({ sent: true });
+  try {
+    await sendResetPassword({to: user.email, password})
+    res.json({ sent: true });
+  } catch (err) {
+    res.status(500).json({ sent: false });
+  }
 });
 /**
  * POST /api/register

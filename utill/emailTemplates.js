@@ -1,6 +1,6 @@
 const {FRONT_APP_URL, EMAIL_FROM} = require("../config/constants");
 
-const resetPassword = (data) => {
+const forgotPassword = (data) => {
     return {
         Destination: {
             ToAddresses: [data.to],
@@ -18,4 +18,22 @@ const resetPassword = (data) => {
         Source: EMAIL_FROM,
     }
 };
-module.exports = {resetPassword}
+const resetPassword = (data) => {
+    return {
+        Destination: {
+            ToAddresses: [data.to],
+        },
+        Message: {
+            Body: {
+                Text: {
+                    Data: `Your new password is: ${data.password}\nUse it for login ${FRONT_APP_URL}/login`,
+                }
+            },
+            Subject: {
+                Data: `Your new password for ${process.env.APP_NAME}`,
+            }
+        },
+        Source: EMAIL_FROM,
+    }
+};
+module.exports = {resetPassword, forgotPassword}
