@@ -132,10 +132,41 @@ router.post('/forgot-password', async (req, res) => {
     res.status(500).json({ sent: false });
   }
 });
+/**
+ * @typedef {object} GetResetPasswordData
+ * @property {string} token
+ */
+/**
+ * GET /api/forgot-password-token
+ * @summary Get email and token
+ * @tags Auth
+ * @param {GetResetPasswordData} request.body.required - Reset token
+ * @return {SentResponseData} 200
+ */
+router.get('/forgot-password-token', async (req, res) => {
+  let user;
+  const token = req.query.token;
+  try {
+    user = await User.findOne({
+      where: {
+        resetPasswordToken: token,
+      },
+    });
+    // eslint-disable-next-line no-empty
+  } catch (e) {
+    console.error(e);
+  }
 
+  if (!user) {
+    res.status(401).json({ key: 'error.url-is-invalid-or-expired' });
+    return;
+  }
+  res.json({token, email: user.email })
+});
 /**
  * @typedef {object} ResetPasswordData
  * @property {string} token
+ * @property {string} password
  */
 
 /**
@@ -147,10 +178,12 @@ router.post('/forgot-password', async (req, res) => {
  */
 router.post('/reset-password', async (req, res) => {
   let user;
+  const {token, password} = req.body;
+
   try {
     user = await User.findOne({
       where: {
-        resetPasswordToken: req.body.token,
+        resetPasswordToken: token,
       },
     });
     // eslint-disable-next-line no-empty
@@ -163,15 +196,9 @@ router.post('/reset-password', async (req, res) => {
     return;
   }
 
-  const password = passwordGenerator.generate();
   user.password = password;
   await user.save(user);
-  try {
-    await sendResetPassword({to: user.email, password})
-    res.json({ sent: true });
-  } catch (err) {
-    res.status(500).json({ sent: false });
-  }
+  res.status(204).json({ sent: true });
 });
 /**
  * POST /api/register
