@@ -26,7 +26,7 @@ const {userUpdateFilterFields} = require("../utill/filter");
  * @return {UserProfile} 200 - The Result
  * @return {string} 404 - User not found
  * */
-router.get('/:userId', async (req, res) => {
+router.get('/:userId', passport.authenticate('jwt'),async (req, res) => {
     const userId = req.params.userId
     if (!isUUID(userId)) {
         return res.status(400).json({error: 'Invalid userId format'});
@@ -62,7 +62,7 @@ router.get('/:userId', async (req, res) => {
  * @return {UserProfile} 200 - The Result
  * @return {string} 404 - User not found
  * */
-router.patch('/:userId',  async (req, res) => {
+router.patch('/:userId',  passport.authenticate('jwt'),async (req, res) => {
     const userId = req.params.userId;
     if (!isUUID(userId)) {
         return res.status(400).json({error: 'Invalid userId format'});
@@ -100,7 +100,7 @@ router.patch('/:userId',  async (req, res) => {
  * @return {string} 200 - The Result
  * @return {string} 404 - User not found
  * */
-router.post('/:userId/avatar',  async (req, res) => {
+router.post('/:userId/avatar',  passport.authenticate('jwt'),async (req, res) => {
     const userId = req.params.userId;
     if (!isUUID(userId)) {
         return res.status(400).json({error: 'Invalid userId format'});
@@ -134,7 +134,7 @@ router.post('/:userId/avatar',  async (req, res) => {
  * @return {string} 200 - The Result
  * @return {string} 404 - User not found
  * */
-router.delete('/:userId/avatar',  async (req, res) => {
+router.delete('/:userId/avatar',  passport.authenticate('jwt'),async (req, res) => {
     const userId = req.params.userId;
     if (!isUUID(userId)) {
         return res.status(400).json({error: 'Invalid userId format'});
