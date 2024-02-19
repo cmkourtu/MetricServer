@@ -1,20 +1,21 @@
-const testEmail = (to) => {
+const {FRONT_APP_URL, EMAIL_FROM} = require("../config/constants");
+
+const resetPassword = (data) => {
     return {
         Destination: {
-            ToAddresses: [to],
+            ToAddresses: [data.to],
         },
         Message: {
             Body: {
                 Text: {
-                    Data: 'The test message from Statistic App by DevMaxUp!',
+                    Data: `Follow the link to reset your password: ${FRONT_APP_URL}/reset-password?token=${data.token}`,
                 }
             },
             Subject: {
-                Data: 'Test Statistic app!',
+                Data: `Reset password for ${process.env.APP_NAME}`,
             }
         },
-        Source: 'admin@yhsh.me',
+        Source: EMAIL_FROM,
     }
 };
-
-module.exports = {testEmail}
+module.exports = {resetPassword}

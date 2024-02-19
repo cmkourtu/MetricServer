@@ -1,31 +1,23 @@
 module.exports = {
-  extends: [
-    'airbnb-base',
-    'plugin:node/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['airbnb-base', 'plugin:node/recommended'],
   env: {
     es6: true,
-    commonjs: true,
     node: true,
   },
-  plugins: ['prettier'],
   parserOptions: {
-    ecmaFeatures: {
-      ecmaVersion: 6,
-      sourceType: 'module',
-      impliedStrict: true,
-    },
+    ecmaVersion: 12,
+    sourceType: 'module',
   },
   rules: {
-    'import/prefer-default-export': 0,
-    'no-param-reassign': 0,
-    'no-underscore-dangle': 0,
-    complexity: [2, { max: 8 }],
-    'max-depth': [2, { max: 3 }],
-    'node/exports-style': [2, 'module.exports'],
-    'node/file-extension-in-import': [2, 'never'],
-    'prettier/prettier': ['error', require('./.prettierrc.js')],
+    'import/prefer-default-export': 'off',
+    'no-param-reassign': 'off',
+    'no-underscore-dangle': 'off',
+    complexity: ['error', {max: 8}],
+    'max-depth': ['error', {max: 3}],
+    'node/exports-style': ['error', 'module.exports'],
+    'node/file-extension-in-import': ['error', 'never'],
+    'prettier/prettier': 'error',
     'func-names': ['error', 'never'],
   },
+  plugins: ['prettier'],
 };

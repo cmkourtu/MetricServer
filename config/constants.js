@@ -8,7 +8,7 @@ module.exports = {
   FRONT_APP_URL: process.env.FRONT_APP_URL,
   AUTH_TOKEN_EXPIRATION_TIME: '30m',
   RESET_PASSWORD_TOKEN_EXPIRATION_TIME: '120m',
-  EMAIL_FROM: `Support <support@${process.env.MAILGUN_DOMAIN}>`,
+  EMAIL_FROM: `Support <${process.env.SENDER_EMAIL}>`,
   DEFAULT_PER_PAGE_COUNT,
   MAILGUN_DOMAIN: process.env.MAILGUN_DOMAIN,
   UPLOAD_UI_PATH,

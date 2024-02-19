@@ -24,6 +24,8 @@
     "erd": "sequelize-erd --source ./erd.js --destination ./erd.svg"
   },
   "dependencies": {
+    "@aws-sdk/client-ses": "^3.514.0",
+    "aws-sdk": "^2.1558.0",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
