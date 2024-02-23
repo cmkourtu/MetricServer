@@ -1,30 +1,58 @@
+const express = require('express');
 const passport = require('passport');
 const passportJwt = require('passport-jwt');
 const { SECRET_KEY } = require('./constants');
 const { User } = require('../models');
+const session = require('express-session');
 
 module.exports = function(app) {
-  passport.use(
-    'jwt',
-    new passportJwt.Strategy(
-      {
-        jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderWithScheme('jwt'),
-        secretOrKey: SECRET_KEY,
-        session: false,
-      },
-      (payload, done) => done(null, payload)
-    )
-  );
+    // Middleware для обробки токена з заголовку авторизації
+    function extractJwtToken(req, res, next) {
+        const authHeader = req.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.substring(11); // Вирізати "Bearer " з початку рядка
+            req.token = token;
+        }if(authHeader && authHeader.startsWith('JWT ')) {
+            const token = authHeader.substring(4); // Вирізати "Bearer " з початку рядка
+            req.token = token;
+        }
+        next();
+    }
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
-  });
+    // Додати проміжний обробник в express
+    app.use(extractJwtToken);
 
-  passport.deserializeUser((id, done) => {
-    User.findByPk(id)
-      .then((user) => done(null, user))
-      .catch((err) => done(err));
-  });
+    // Після вирізання "Bearer " з токена, використовуємо його для автентифікації за допомогою passport-jwt
+    passport.use(
+        'jwt',
+        new passportJwt.Strategy(
+            {
+                jwtFromRequest: passportJwt.ExtractJwt.fromExtractors([
+                    (req) => req.token // Використовуємо токен, який ми витягнули з проміжного обробника
+                ]),
+                secretOrKey: SECRET_KEY,
+                session: false,
+            },
+            (payload, done) => done(null, payload)
+        )
+    );
 
-  app.use(passport.initialize());
+    passport.serializeUser((user, done) => {
+        done(null, user.id);
+    });
+
+    passport.deserializeUser((id, done) => {
+        User.findByPk(id)
+            .then((user) => done(null, user))
+            .catch((err) => done(err));
+    });
+    app.use(session({
+        secret: 'your_secret_key',
+        resave: false,
+        saveUninitialized: false
+    }));
+
+    app.use(passport.initialize());
+    app.use(passport.session()); // Use session support for passport
+
 };
