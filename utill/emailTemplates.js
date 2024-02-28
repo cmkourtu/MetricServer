@@ -8,7 +8,7 @@ const forgotPassword = (data) => {
         Message: {
             Body: {
                 Text: {
-                    Data: `Follow the link to reset your password: ${FRONT_APP_URL}/reset-password?token=${data.token}`,
+                    Data: `Follow the link to reset your password: ${FRONT_APP_URL}/auth/reset-password?token=${data.token}`,
                 }
             },
             Subject: {
