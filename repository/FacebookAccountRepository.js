@@ -2,13 +2,9 @@ const { User, FacebookAccount } = require('../models');
 const {Op} = require("sequelize");
 
 const saveFacebookAccount = async (userId, metaData, accessToken) => {
-    console.log({userId, metaData, accessToken})
     if(!metaData) return false;
-    console.log(321)
     const isExistSameRecord = await isUserHaveThisMetaAccount(userId, metaData.id);
-    console.log({isExistSameRecord})
     if(isExistSameRecord) return false;
-    console.log("Save")
     return await FacebookAccount.create({
         userId,
         accessToken,
@@ -17,6 +13,13 @@ const saveFacebookAccount = async (userId, metaData, accessToken) => {
         lastName: metaData.last_name,
         accessTokenReceiveTime: Date.now()
     })
+}
+const findAllByUserId = async (userId) => {
+    return (await FacebookAccount.findAll({
+        where: {
+            userId
+        },
+    })).map(account=>account.dataValues)
 }
 
 const isUserHaveThisMetaAccount = async (userId, facebookId) => {
@@ -33,4 +36,4 @@ const isUserHaveThisMetaAccount = async (userId, facebookId) => {
     return records.length>0;
 }
 
-module.exports = {saveFacebookAccount}
+module.exports = {saveFacebookAccount, findAllByUserId}

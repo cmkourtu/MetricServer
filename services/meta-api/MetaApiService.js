@@ -10,7 +10,7 @@ const {
     AdFields,
 } = require("../../utils/constants");
 
-class MeteApiService {
+class MetaApiService {
     constructor(accessToken) {
         this.accessToken = accessToken;
         this.api = bizSdk.FacebookAdsApi.init(accessToken);
@@ -124,4 +124,4 @@ class MeteApiService {
     }
 }
 
-module.exports = MeteApiService;
+module.exports = MetaApiService;
