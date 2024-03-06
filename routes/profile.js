@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const {User} = require('../models');
-const {upload} = require("../services/avatar-servise");
+const {upload} = require("../services/avatar-service");
 const path = require('path')
 const passport = require("passport");
 const {isUUID} = require("validator");

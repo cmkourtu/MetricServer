@@ -1,18 +1,11 @@
 const router = require('express').Router();
-const passwordGenerator = require('generate-password');
 const { User } = require('../models');
-const {
-  FRONT_APP_URL,
-  EMAIL_FROM,
-  MAILGUN_DOMAIN,
-} = require('../config/constants');
-const mailgun = require('../config/mailgun');
 const {
   createAndSaveAuthTokens,
   createAndSaveResetPasswordToken,
 } = require('../helpers/tokens');
 const { registerUser } = require('../services/auth-service');
-const {sendResetPassword, sendForgotPassword} = require("../services/email-service");
+const {sendForgotPassword} = require("../services/email-service");
 /**
  * @typedef {object} UserCreationData
  * @property {string} email
@@ -126,8 +119,8 @@ router.post('/forgot-password', async (req, res) => {
 
   const token = await createAndSaveResetPasswordToken(user);
   try {
-    await sendForgotPassword( {to: email, token})
-    res.json({ sent: true });
+    const isSend = await sendForgotPassword( {to: email, token})
+    res.json({ sent: isSend });
   } catch (err) {
     res.status(500).json({ sent: false });
   }
