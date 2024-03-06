@@ -1,4 +1,6 @@
 const axios = require("axios");
+const {isUserExistById} = require("../repository/UserRepository");
+const {saveFacebookAccount} = require("../repository/FacebookAccountRepository");
 
 const getFacebookAccessTokenFromCode = async (code) => {
     try {
@@ -36,13 +38,17 @@ const getFacebookUserData = async (accessToken) => {
     }
 };
 
-const addFacebookAccountByCode = async (code) => {
+const addFacebookAccountByCode = async (userId, code) => {
+    const isExistUser = isUserExistById(userId);
+    if(!isExistUser) return false;
     const accessToken = await getFacebookAccessTokenFromCode(code);
     if (!accessToken) {
-        return null;
+        return false;
     }
+    console.log("1")
     const userData = await getFacebookUserData(accessToken);
-    return {...userData, accessToken};
+    console.log({userData})
+    return await saveFacebookAccount(userId, userData, accessToken);
 }
 
 module.exports = {

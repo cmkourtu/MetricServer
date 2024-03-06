@@ -1,42 +1,56 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: (queryInterface, DataTypes) => {
-    return queryInterface.createTable('FacebookAccounts', {
+  up: async (queryInterface, Sequelize) => {
+    await queryInterface.createTable('FacebookAccounts', {
       id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.literal('uuid_generate_v1()'),
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV1,
         allowNull: false,
         primaryKey: true,
       },
+      userId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
       accessToken: {
-        type: DataTypes.STRING,
+        type: Sequelize.STRING(300),
         allowNull: false,
       },
       accessTokenReceiveTime: {
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
         allowNull: false,
       },
       facebookId: {
-        type: DataTypes.BIGINT,
+        type: Sequelize.BIGINT,
         allowNull: false,
       },
-      name: {
-        type: DataTypes.STRING,
+      firstName: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      lastName: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       createdAt: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: DataTypes.DATE,
+        type: Sequelize.DATE,
       },
     });
   },
-  down: (queryInterface, DataTypes) => {
-    return queryInterface.dropTable('FacebookAccounts');
-  },
+
+  down: async (queryInterface, Sequelize) => {
+    await queryInterface.dropTable('FacebookAccounts');
+  }
 };

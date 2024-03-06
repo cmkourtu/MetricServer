@@ -10,13 +10,21 @@ module.exports = (sequelize, DataTypes) => {
      * @property {string} updatedAt - ISO Date
      */
     const FacebookAccount = sequelize.define(
-        'FacebookAccounts',
+        'FacebookAccount',
         {
             id: {
                 type: DataTypes.UUID,
                 defaultValue: DataTypes.UUIDV1,
                 allowNull: false,
                 primaryKey: true,
+            },
+            userId:{
+                type: DataTypes.UUID,
+                allowNull: false,
+                references: {
+                    model: 'Users',
+                    key: 'id',
+                },
             },
             accessToken: {
                 type: DataTypes.STRING,
@@ -30,7 +38,11 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.BIGINT,
                 allowNull: false,
             },
-            name: {
+            firstName: {
+                type: DataTypes.STRING,
+                allowNull: false,
+            },
+            lastName: {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
