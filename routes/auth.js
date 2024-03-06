@@ -1,12 +1,5 @@
 const router = require('express').Router();
-const passwordGenerator = require('generate-password');
 const { User } = require('../models');
-const {
-  FRONT_APP_URL,
-  EMAIL_FROM,
-  MAILGUN_DOMAIN,
-} = require('../config/constants');
-const mailgun = require('../config/mailgun');
 const {
   createAndSaveAuthTokens,
   createAndSaveResetPasswordToken,
