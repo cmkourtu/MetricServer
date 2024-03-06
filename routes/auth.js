@@ -119,8 +119,8 @@ router.post('/forgot-password', async (req, res) => {
 
   const token = await createAndSaveResetPasswordToken(user);
   try {
-    await sendForgotPassword( {to: email, token})
-    res.json({ sent: true });
+    const isSend = await sendForgotPassword( {to: email, token})
+    res.json({ sent: isSend });
   } catch (err) {
     res.status(500).json({ sent: false });
   }

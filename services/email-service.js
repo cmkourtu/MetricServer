@@ -10,17 +10,13 @@ const ses = new AWS.SES({
 
 const sendForgotPassword = async (data) => {
     //data - {to, token}
-    return sendMessage(forgotPassword(data));
+    return await sendMessage(forgotPassword(data));
 }
 
 const sendMessage = async (params) => {
-    let res;
-    ses.sendEmail(params, (err, data) => {
-        if (!err) {
-            res = {data};
-        } else {
-            throw new Error("Email send error!");
-        }
+    let res = true;
+    await ses.sendEmail(params, (err, data) => {
+        res = false;
     });
     return res;
 }
