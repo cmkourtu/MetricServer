@@ -4,6 +4,7 @@ const passportJwt = require('passport-jwt');
 const { SECRET_KEY } = require('./constants');
 const { User } = require('../models');
 const session = require('express-session');
+const FacebookStrategy = require("passport-facebook").Strategy;
 
 module.exports = function(app) {
     // Middleware для обробки токена з заголовку авторизації
@@ -46,6 +47,23 @@ module.exports = function(app) {
             .then((user) => done(null, user))
             .catch((err) => done(err));
     });
+
+    passport.use(
+        new FacebookStrategy(
+            {
+                clientID: process.env.FACEBOOK_APP_ID,
+                clientSecret: process.env.FACEBOOK_APP_SECRET,
+                callbackURL: "api/auth/facebook/callback",
+                scope: ["pages_show_list", "ads_management", "ads_read", "pages_read_engagement", "public_profile", "email"],
+                profileFields: ['id', 'displayName', 'email'],
+            },
+            function (accessToken, refreshToken, profile, done) {
+                console.log({accessToken, refreshToken, profile: profile._json});
+
+                return done(null, {accessToken, refreshToken, profile: profile._json});
+            }
+        )
+    );
     app.use(session({
         secret: 'your_secret_key',
         resave: false,

@@ -56,7 +56,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         {}
     );
-
+    User.associate = function (models) {
+        User.belongsToMany(models.FacebookAccounts, {
+            through: 'UserFacebookAccounts',
+            foreignKey: 'userId',
+        });
+    };
     User.prototype.toJSON = function () {
         const values = Object.assign({}, this.get());
 
