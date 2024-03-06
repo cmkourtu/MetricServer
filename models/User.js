@@ -1,19 +1,6 @@
-const crypto = require('crypto');
-
-const encrypt = (data, encryptionHash) =>
-    crypto.pbkdf2Sync(data, encryptionHash, 1, 128, 'sha1').toString('base64');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
-    /**
-     * @typedef {object} User
-     * @property {string} id
-     * @property {string} email
-     * @property {string} firstName
-     * @property {string} lastName
-     * @property {string} companyName
-     * @property {string} createdAt - ISO Date
-     * @property {string} updatedAt - ISO Date
-     */
     const User = sequelize.define(
         'User',
         {
@@ -45,9 +32,6 @@ module.exports = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 unique: true,
             },
-            encryptionHash: {
-                type: DataTypes.STRING,
-            },
             encryptedPassword: {
                 type: DataTypes.STRING,
             },
@@ -57,13 +41,10 @@ module.exports = (sequelize, DataTypes) => {
             password: {
                 type: DataTypes.VIRTUAL,
                 set(password) {
-                    const encryptionHash = crypto.randomBytes(128).toString('base64');
+                    const saltRounds = 10; // Кількість раундів хешування
+                    const encryptedPassword = bcrypt.hashSync(password, saltRounds);
                     this.setDataValue('password', password);
-                    this.setDataValue('encryptionHash', encryptionHash);
-                    this.setDataValue(
-                        'encryptedPassword',
-                        encrypt(password, encryptionHash)
-                    );
+                    this.setDataValue('encryptedPassword', encryptedPassword);
                 },
             },
             avatar: {
@@ -75,17 +56,18 @@ module.exports = (sequelize, DataTypes) => {
         },
         {}
     );
+
     User.prototype.toJSON = function () {
         const values = Object.assign({}, this.get());
 
         delete values.password;
-        delete values.encryptionHash;
         delete values.encryptedPassword;
         delete values.refreshToken;
         return values;
     };
+
     User.prototype.isEqualPassword = function (password) {
-        return encrypt(password, this.encryptionHash) === this.encryptedPassword;
+        return bcrypt.compareSync(password, this.encryptedPassword);
     };
 
     return User;
