@@ -12,7 +12,7 @@ const {
   createAndSaveResetPasswordToken,
 } = require('../helpers/tokens');
 const { registerUser } = require('../services/auth-service');
-const {sendResetPassword, sendForgotPassword} = require("../services/email-service");
+const {sendForgotPassword} = require("../services/email-service");
 /**
  * @typedef {object} UserCreationData
  * @property {string} email
