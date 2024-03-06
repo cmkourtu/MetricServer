@@ -18,4 +18,4 @@ const forgotPassword = (data) => {
         Source: EMAIL_FROM,
     }
 };
-module.exports = {resetPassword, forgotPassword}
+module.exports = { forgotPassword}
