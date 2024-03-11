@@ -1,11 +1,11 @@
 const router = require('express').Router();
-const { User } = require('../models');
+const { User } = require('../../models');
 const {
   createAndSaveAuthTokens,
   createAndSaveResetPasswordToken,
-} = require('../helpers/tokens');
-const { registerUser } = require('../services/auth-service');
-const {sendForgotPassword} = require("../services/email-service");
+} = require('../../helpers/tokens');
+const { registerUser } = require('../../services/auth-service');
+const {sendForgotPassword} = require("../../services/email-service");
 /**
  * @typedef {object} UserCreationData
  * @property {string} email
