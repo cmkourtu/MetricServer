@@ -21,7 +21,13 @@ const findAllByUserId = async (userId) => {
         },
     })).map(account=>account.dataValues)
 }
-
+const findByFacebookId = async (facebookId) => {
+    return (await FacebookAccount.findOne({
+        where: {
+            facebookId
+        },
+    })).dataValues;
+}
 const isUserHaveThisMetaAccount = async (userId, facebookId) => {
     const records = await FacebookAccount.findAll({
         where: {
@@ -36,4 +42,4 @@ const isUserHaveThisMetaAccount = async (userId, facebookId) => {
     return records.length>0;
 }
 
-module.exports = {saveFacebookAccount, findAllByUserId}
+module.exports = {saveFacebookAccount, findAllByUserId, findByFacebookId}
