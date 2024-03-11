@@ -4,8 +4,8 @@ const path = require('path');
 module.exports = (app) => {
   swagger(app)({
     info: {
-      version: '1.0.0',
-      title: 'app-name',
+      version: '0.0.1',
+      title: 'Statistic app',
       description: '',
     },
     security: {
@@ -17,7 +17,7 @@ module.exports = (app) => {
       },
     },
     baseDir: path.resolve(__dirname, '../'),
-    filesPattern: ['./routes/*.js', './helpers/*.js', './models/*.js'],
+    filesPattern: ['./routes/*.js', './routes/*/*.js', './helpers/*.js', './models/*.js'],
     exposeApiDocs: true,
     apiDocsPath: '/api-docs.json',
   });
