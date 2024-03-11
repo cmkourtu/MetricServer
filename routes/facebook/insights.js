@@ -5,7 +5,7 @@ const router = require('express').Router();
 router.get("/", passport.authenticate('jwt'), async (req, res) =>{
     const userId = req.user.id;
     const {type, start, end} = req.query;
-    await res.json(await getAllInsightsByUserId(userId, type, start, end))
+    await res.json(await getAllInsightsByUserId(userId, type, start, end));
 })
 
 
