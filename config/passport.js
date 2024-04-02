@@ -53,7 +53,7 @@ module.exports = function(app) {
             {
                 clientID: process.env.FACEBOOK_APP_ID,
                 clientSecret: process.env.FACEBOOK_APP_SECRET,
-                callbackURL: "api/auth/facebook/callback",
+                callbackURL: process.env.FRONT_APP_URL +"/callback/facebook-callback",
                 scope: ["pages_show_list", "ads_management", "ads_read", "pages_read_engagement", "public_profile", "email"],
                 profileFields: ['id', 'displayName', 'email'],
             },

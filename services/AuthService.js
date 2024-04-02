@@ -5,18 +5,18 @@ const {saveFacebookAccount} = require("../repository/FacebookAccountRepository")
 const getFacebookAccessTokenFromCode = async (code) => {
     try {
         const {data} = await axios({
-            url: 'https://graph.facebook.com/v18.0/oauth/access_token',
+            url: 'https://graph.facebook.com/v19.0/oauth/access_token',
             method: 'get',
             params: {
                 client_id: process.env.FACEBOOK_APP_ID,
                 client_secret: process.env.FACEBOOK_APP_SECRET,
-                redirect_uri: process.env.API_URL + '/api/auth/facebook/callback',
+                redirect_uri: process.env.FRONT_APP_URL + '/callback/facebook-callback',
                 code,
             },
         });
         return data.access_token;
     } catch (err) {
-        console.log("getFacebookAccessTokenFromCode", err.message)
+        console.log("getFacebookAccessTokenFromCode", err)
         return null;
     }
 };
@@ -33,7 +33,7 @@ const getFacebookUserData = async (accessToken) => {
         });
         return data;
     }catch (err){
-        console.log("getFacebookUserData", err.message)
+        console.log("getFacebookUserData", err)
         return null;
     }
 };
@@ -45,7 +45,6 @@ const addFacebookAccountByCode = async (userId, code) => {
     if (!accessToken) {
         return false;
     }
-    console.log("1")
     const userData = await getFacebookUserData(accessToken);
     console.log({userData})
     return await saveFacebookAccount(userId, userData, accessToken);
