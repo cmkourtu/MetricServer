@@ -46,7 +46,7 @@ const AdInsightsFields = [
     "video_p95_watched_actions",
     "video_play_actions",
     "video_play_curve_actions",
-    "website_ctr"
+    "website_ctr",
 ];
 const AdFields = ["name", "id"];
 const AdParam = {
@@ -78,6 +78,7 @@ const CampaignsFields = [
     "date_start",
     "date_stop",
 ];
+
 function dateMinusMonth(date, month) {
     date = new Date(date);
     for (let i = 0; i < month; i++) {
@@ -85,13 +86,14 @@ function dateMinusMonth(date, month) {
     }
     return date;
 }
+
 const DailyFilterParam = (startDate, endDate) => {
     const nowDate = new Date(Date.now());
     startDate = startDate ? startDate : dateMinusMonth(nowDate, 36).toISOString().split("T")[0];
     endDate = endDate ? endDate : nowDate.toISOString().split("T")[0];
     return {
-        time_range: {"since": startDate, "until": endDate}, // Період, за який потрібно отримати статистику
-        time_increment: "1",
+        time_range: {since: startDate, until: endDate}, // Період, за який потрібно отримати статистику
+        // time_increment: "1",
         level: "account",
     };
 };
