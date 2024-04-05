@@ -21,7 +21,14 @@ router.get(
         await res.json(await getAdInsightByAdId(facebookId, adId, type, start, end));
     }
 );
-
+/**
+ * GET /api/facebook/ads/insight/facebook/:facebookId/ad/:adId/preview
+ * @summary Get ad preview by facebook id and ad id
+ * @tags Facebook Ads
+ * @param {string} facebookId.path - Facebook ID of the account
+ * @param {string} adId.path - Ad ID
+ * @return {object} 200 - Result (IFrame)
+ */
 router.get(
     "/insight/facebook/:facebookId/ad/:adId/preview",
     passport.authenticate("jwt"),
