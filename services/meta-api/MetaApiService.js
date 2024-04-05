@@ -29,12 +29,13 @@ class MetaApiService {
     async getAllUserInsights() {
         return this.getUserInsightsGroupedByDate();
     }
-    getFilter(startDate, endDate, type){
+
+    getFilter(startDate, endDate, type) {
         return FilterParam(startDate, endDate, type);
     }
 
     async getUserInsightsGroupedByDate(startDate, endDate, type) {
-        const fieldFilter = this.getFilter(startDate, endDate, type)
+        const fieldFilter = this.getFilter(startDate, endDate, type);
         const businessAccounts = await this.getUserBusinessAccounts();
 
         const campaignsInsights = await Promise.all(
@@ -45,11 +46,13 @@ class MetaApiService {
         );
         return campaignsInsights;
     }
-    async getCampaignByAccountId(accountId)  {
+
+    async getCampaignByAccountId(accountId) {
         return (await new this.AdAccount(accountId).getCampaigns(CampaignsFields)).map(
             campaign => campaign._data
         );
     }
+
     async getCampaignsWithInsights(accountId, fieldFilter) {
         const campaigns = await this.getCampaignByAccountId(accountId);
 
@@ -60,10 +63,13 @@ class MetaApiService {
             })
         );
     }
-    async getCampaignAdSets(campaignId) {
-        return (await new this.Campaign(campaignId).getAdSets(CampaignsFields)).map(adset=>adset._data);
 
+    async getCampaignAdSets(campaignId) {
+        return (await new this.Campaign(campaignId).getAdSets(CampaignsFields)).map(
+            adset => adset._data
+        );
     }
+
     async getCampaignAdSetsWithInsight(campaign, fieldFilter) {
         const campaignId = typeof campaign === "object" ? campaign.id : campaign;
         const adSets = await this.getCampaignAdSets(campaignId);
@@ -75,10 +81,12 @@ class MetaApiService {
             })
         );
     }
+
     async getAdsByAdSet(adSetId) {
         const ads = await new this.AdSet(adSetId).getAds(AdFields);
         return ads.map(ad => ad._data);
     }
+
     async getAdsWithInsights(adSetId, fieldFilter) {
         const ads = await this.getAdsByAdSet(adSetId);
         return Promise.all(
@@ -93,14 +101,20 @@ class MetaApiService {
         const insights = await new this.Ad(adId).getInsights(AdInsightsFields, fieldFilter);
         return insights.map(insight => insight._data);
     }
+
     async getCampaignInsights(campaignId, fieldFilter) {
-        const insights = await new this.Campaign(campaignId).getInsights(AdInsightsFields, fieldFilter);
+        const insights = await new this.Campaign(campaignId).getInsights(
+            AdInsightsFields,
+            fieldFilter
+        );
         return insights.map(insight => insight._data);
     }
+
     async getAdSetsInsights(adSetId, fieldFilter) {
         const insights = await new this.AdSet(adSetId).getInsights(AdInsightsFields, fieldFilter);
         return insights.map(insight => insight._data);
     }
+
     async getAdInsights(adId, fieldFilter) {
         const insights = await new this.Ad(adId).getInsights(AdInsightsFields, fieldFilter);
         return insights.map(insight => insight._data);

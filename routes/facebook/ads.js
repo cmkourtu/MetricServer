@@ -1,6 +1,6 @@
 const passport = require("passport");
 const {getAdInsightByAdId} = require("../../services/meta-service");
-const router = require('express').Router();
+const router = require("express").Router();
 /**
  * GET /api/facebook/ads/insight/facebook/:facebookId/ad/:adId
  * @summary Get ad insights by facebook id and ad id
@@ -12,10 +12,14 @@ const router = require('express').Router();
  * @param {string} end.query - Filter end date
  * @return {object} 200 - Result
  */
-router.get("/insight/facebook/:facebookId/ad/:adId", passport.authenticate('jwt'), async (req, res) => {
-    const {adId, facebookId} = req.params;
-    const {type, start, end} = req.query;
-    await res.json(await getAdInsightByAdId(facebookId, adId, type, start, end));
-})
+router.get(
+    "/insight/facebook/:facebookId/ad/:adId",
+    passport.authenticate("jwt"),
+    async (req, res) => {
+        const {adId, facebookId} = req.params;
+        const {type, start, end} = req.query;
+        await res.json(await getAdInsightByAdId(facebookId, adId, type, start, end));
+    }
+);
 
 module.exports = router;

@@ -1,5 +1,5 @@
-const userUpdateFilterFields = (data) => {
-    const allowedFields = ['firstName', 'lastName', 'companyName', 'jobTitle'];
+const userUpdateFilterFields = data => {
+    const allowedFields = ["firstName", "lastName", "companyName", "jobTitle"];
     const filteredData = {};
     Object.keys(data).forEach(key => {
         if (data[key] !== null && data[key] !== undefined && allowedFields.includes(key)) {
@@ -9,4 +9,4 @@ const userUpdateFilterFields = (data) => {
     return filteredData;
 };
 
-module.exports = { userUpdateFilterFields }
+module.exports = {userUpdateFilterFields};
