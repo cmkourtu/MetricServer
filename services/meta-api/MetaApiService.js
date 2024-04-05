@@ -14,7 +14,7 @@ class MetaApiService {
     constructor(accessToken) {
         this.accessToken = accessToken;
         this.api = bizSdk.FacebookAdsApi.init(accessToken);
-        this.Facebook = new FB({graphVersion: "v8.0"});
+        this.Facebook = new FB({graphVersion: "v19.0"});
         // this.api.setDebug(
         //   process.env.META_API_DEBUG ? process.env.META_API_DEBUG : false
         // );
@@ -158,6 +158,19 @@ class MetaApiService {
             return null;
         }
     }
+    async getAdPreview(adId) {
+        try {
+            const preview = await new this.Ad(adId).getPreviews({}, {
+                ad_format: 'MOBILE_FEED_STANDARD' //DESKTOP_FEED_STANDARD
+            });
+            return preview[0]._data.body;
+        } catch (err) {
+            console.error("getAdPreview", err);
+            return null;
+        }
+    }
+
+
 }
 
 module.exports = MetaApiService;
