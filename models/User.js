@@ -1,8 +1,8 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 module.exports = (sequelize, DataTypes) => {
     const User = sequelize.define(
-        'User',
+        "User",
         {
             id: {
                 type: DataTypes.UUID,
@@ -43,16 +43,16 @@ module.exports = (sequelize, DataTypes) => {
                 set(password) {
                     const saltRounds = 10; // Кількість раундів хешування
                     const encryptedPassword = bcrypt.hashSync(password, saltRounds);
-                    this.setDataValue('password', password);
-                    this.setDataValue('encryptedPassword', encryptedPassword);
+                    this.setDataValue("password", password);
+                    this.setDataValue("encryptedPassword", encryptedPassword);
                 },
             },
             avatar: {
-                type: DataTypes.STRING
+                type: DataTypes.STRING,
             },
             isActive: {
-                type: DataTypes.BOOLEAN
-            }
+                type: DataTypes.BOOLEAN,
+            },
         },
         {}
     );

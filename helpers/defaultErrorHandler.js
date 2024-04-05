@@ -1,40 +1,40 @@
-const Sequelize = require('sequelize');
+const Sequelize = require("sequelize");
 
 const respondWithHttpOrUnknownError = (err, res) => {
-  const data = {};
-  if (err instanceof String) {
-    data.message = err;
-  }
-  if (err.message) {
-    data.message = err.message;
-  }
-  if (err.key) {
-    data.key = err.key;
-  }
+    const data = {};
+    if (err instanceof String) {
+        data.message = err;
+    }
+    if (err.message) {
+        data.message = err.message;
+    }
+    if (err.key) {
+        data.key = err.key;
+    }
 
-  res.status(err.status || 500).json(data);
+    res.status(err.status || 500).json(data);
 };
 
 module.exports = (err, req, res, next) => {
-  if (!err) {
-    next();
-  }
+    if (!err) {
+        next();
+    }
 
-  console.error(err);
-  console.error(err.errors || err.message || '');
+    console.error(err);
+    console.error(err.errors || err.message || "");
 
-  if (err instanceof Sequelize.ValidationError) {
-    res.status(err.status || 400).json(
-      err.errors.map(({ path, validatorKey, validatorArgs, message }) => ({
-        path,
-        validatorKey: `error.${validatorKey}`,
-        validatorArgs,
-        message,
-      }))
-    );
+    if (err instanceof Sequelize.ValidationError) {
+        res.status(err.status || 400).json(
+            err.errors.map(({path, validatorKey, validatorArgs, message}) => ({
+                path,
+                validatorKey: `error.${validatorKey}`,
+                validatorArgs,
+                message,
+            }))
+        );
 
-    return;
-  }
+        return;
+    }
 
-  respondWithHttpOrUnknownError(err, res);
+    respondWithHttpOrUnknownError(err, res);
 };

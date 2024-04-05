@@ -1,5 +1,5 @@
-const AWS = require('aws-sdk');
-const { forgotPassword} = require("../utill/emailTemplates");
+const AWS = require("aws-sdk");
+const {forgotPassword} = require("../utill/emailTemplates");
 
 // Конфігурація AWS SES
 const ses = new AWS.SES({
@@ -8,16 +8,16 @@ const ses = new AWS.SES({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 });
 
-const sendForgotPassword = async (data) => {
+const sendForgotPassword = async data => {
     //data - {to, token}
     return await sendMessage(forgotPassword(data));
-}
+};
 
-const sendMessage = async (params) => {
+const sendMessage = async params => {
     let res = true;
     await ses.sendEmail(params, (err, data) => {
         res = false;
     });
     return res;
-}
-module.exports = { sendMessage, sendForgotPassword}
+};
+module.exports = {sendMessage, sendForgotPassword};
