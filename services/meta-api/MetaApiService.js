@@ -99,7 +99,6 @@ class MetaApiService {
     }
     async getAdSetsInsights(adSetId, fieldFilter) {
         const insights = await new this.AdSet(adSetId).getInsights(AdInsightsFields, fieldFilter);
-        console.log(insights)
         return insights.map(insight => insight._data);
     }
     async getAdInsights(adId, fieldFilter) {

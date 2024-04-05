@@ -22,11 +22,13 @@ const findAllByUserId = async (userId) => {
     })).map(account=>account.dataValues)
 }
 const findByFacebookId = async (facebookId) => {
-    return (await FacebookAccount.findOne({
+    const facebookAccount = await FacebookAccount.findOne({
         where: {
             facebookId
         },
-    })).dataValues;
+    });
+    if(!facebookAccount) throw new Error("Facebook account not found!")
+    return facebookAccount.dataValues;
 }
 const isUserHaveThisMetaAccount = async (userId, facebookId) => {
     const records = await FacebookAccount.findAll({
