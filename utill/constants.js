@@ -10,8 +10,6 @@ const AdInsightsFields = [
     "cpm",
     "ctr",
     "spend",
-    "ad_name",
-    "ad_id",
     "date_start",
     "date_stop",
     "buying_type",
@@ -47,6 +45,12 @@ const AdInsightsFields = [
     "video_play_actions",
     "video_play_curve_actions",
     "website_ctr",
+    "ad_name",
+    "ad_id",
+    "adset_id",
+    "adset_name",
+    "campaign_name",
+    "campaign_id",
 ];
 const AdFields = ["name", "id"];
 const AdParam = {
