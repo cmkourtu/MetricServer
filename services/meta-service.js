@@ -150,6 +150,12 @@ const getAdSetInsightById = async (facebookId, adSetId, type, start, end) => {
     const filter = metaApi.getFilter(start, end, type);
     return await metaApi.getAdSetsInsights(adSetId, filter);
 };
+
+const getAdPreviewByAdId = async (facebookId, adId) => {
+    const userMetaAccount = await findByFacebookId(facebookId);
+    const metaApi = new MetaApiService(userMetaAccount.accessToken);
+    return await metaApi.getAdPreview(adId);
+}
 module.exports = {
     getAllInsightsByUserId,
     getAllFacebookAccountsByUserId,
@@ -164,4 +170,5 @@ module.exports = {
     getAdsByAdSet,
     getAdInsightByAdId,
     getAdSetInsightById,
+    getAdPreviewByAdId
 };
