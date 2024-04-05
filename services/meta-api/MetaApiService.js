@@ -8,7 +8,7 @@ const {
     CampaignsFields,
     FilterParam,
     AdFields,
-} = require("../../utils/constants");
+} = require("../../utill/constants");
 
 class MetaApiService {
     constructor(accessToken) {

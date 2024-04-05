@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * @property {string} updatedAt - ISO Date
      */
     const FacebookAccount = sequelize.define(
-        'FacebookAccount',
+        "FacebookAccount",
         {
             id: {
                 type: DataTypes.UUID,
@@ -18,12 +18,12 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            userId:{
+            userId: {
                 type: DataTypes.UUID,
                 allowNull: false,
                 references: {
-                    model: 'Users',
-                    key: 'id',
+                    model: "Users",
+                    key: "id",
                 },
             },
             accessToken: {

@@ -1,6 +1,6 @@
 const passport = require("passport");
 const {Router} = require("express");
-const {  addFacebookAccountByCode} = require("../../services/AuthService");
+const {  addFacebookAccountByCode} = require("../../services/facebook-auth-service");
 const router = new Router();
 
 router.get('/', passport.authenticate("facebook"))
