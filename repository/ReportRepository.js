@@ -31,7 +31,7 @@ const getReportById = async reportId => {
 };
 const getReportsByUserId = async userId => {
     try {
-        const report = await Report.find({where: {userId}});
+        const report = await Report.findAll({where: {userId}});
         if (!report) {
             throw new Error("Report not found");
         }
