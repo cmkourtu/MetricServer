@@ -1,6 +1,6 @@
 const MetaApiService = require("./meta-api/MetaApiService");
 const {findAllByUserId, findByFacebookId} = require("../repository/FacebookAccountRepository");
-const {mapAdInsightToInsightDto} = require("../utill/mapper");
+const {mapAdInsightToInsightDto, mapAdInsightsToAdsSetInsight} = require("../utill/mapper");
 
 const getAllInsightsByUserId = async (userId, type, start, end) => {
     const userMetaAccounts = await findAllByUserId(userId);
@@ -149,7 +149,9 @@ const getAdSetInsightById = async (facebookId, adSetId, type, start, end) => {
     const userMetaAccount = await findByFacebookId(facebookId);
     const metaApi = new MetaApiService(userMetaAccount.accessToken);
     const filter = metaApi.getFilter(start, end, type);
-    return await metaApi.getAdSetsInsights(adSetId, filter);
+    const adSetInsight = (await metaApi.getAdSetsInsights(adSetId, filter))[0];
+    mapAdInsightsToAdsSetInsight(adSetInsight);
+    return adSetInsight;
 };
 
 const getAdPreviewByAdId = async (facebookId, adId) => {

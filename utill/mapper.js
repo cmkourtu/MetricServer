@@ -2,15 +2,16 @@
 const mapAdInsightToInsightDtoPrivate = insight => {
     mapObjectStringFieldToNumberIfPossible(insight);
     insight.video_watched_3_s_percent =
-        insight?.video_play_curve_actions?.find(a => a.action_type === "video_view")?.value[2] || 0;
+        insight?.video_play_curve_actions?.find(a => a.action_type === "video_view")?.value?.[2] ||
+        0;
     insight.video_watched_15_s_percent =
-        insight?.video_play_curve_actions?.find(a => a.action_type === "video_view")?.value[15] ||
+        insight?.video_play_curve_actions?.find(a => a.action_type === "video_view")?.value?.[15] ||
         0;
     insight.video_watched_30_s_percent =
-        insight?.video_play_curve_actions?.find(a => a.action_type === "video_view")?.value[17] ||
+        insight?.video_play_curve_actions?.find(a => a.action_type === "video_view")?.value?.[17] ||
         0;
     insight.video_watched_0_s_count =
-        insight?.actions?.find(a => a.action_type === "video_view").value * 1 || 0;
+        insight?.actions?.find(a => a.action_type === "video_view")?.value * 1 || 0;
     insight.video_watched_3_s_count =
         (insight.video_watched_0_s_count * insight?.video_watched_3_s_percent) / 100 || 0;
     insight.video_watched_15_s_count =
@@ -58,24 +59,24 @@ const mapAdInsightToInsightDtoPrivate = insight => {
         (insight?.actions?.find(a => a.action_type === "post_engagement").value / insight.reach) *
             100 || 0;
     insight.click_to_website =
-        insight?.actions?.find(a => a.action_type === "link_click").value * 1 || 0;
+        insight?.actions?.find(a => a.action_type === "link_click")?.value * 1 || 0;
     insight.web_site_ctr =
-        insight?.website_ctr?.find(a => a.action_type === "link_click").value * 100 || 0;
+        insight?.website_ctr?.find(a => a.action_type === "link_click")?.value * 100 || 0;
     insight.link_clicks =
-        insight?.actions?.find(a => a.action_type === "link_click").value * 1 || 0;
+        insight?.actions?.find(a => a.action_type === "link_click")?.value * 1 || 0;
     insight.cpc_outbound_link_click =
-        insight?.cost_per_action_type?.find(a => a.action_type === "link_click").value * 1 || 0;
+        insight?.cost_per_action_type?.find(a => a.action_type === "link_click")?.value * 1 || 0;
     insight.clicks_all = insight?.clicks * 1 || 0;
     insight.ipm = insight.impressions / 1000 || 0;
     insight.cpa = insight?.spend / (insight.link_clicks + insight.video_watched_0_s_count) || 0;
     insight.cpc_link_click = insight?.spend / insight?.link_clicks || 0;
     insight.cpm_all = insight?.cpm * 1 || 0;
     insight.cpa_video_view =
-        insight?.cost_per_action_type?.find(a => a.action_type === "video_view").value * 1 || 0;
+        insight?.cost_per_action_type?.find(a => a.action_type === "video_view")?.value * 1 || 0;
     insight.cpa_link_click =
-        insight?.cost_per_action_type?.find(a => a.action_type === "link_click").value * 1 || 0;
+        insight?.cost_per_action_type?.find(a => a.action_type === "link_click")?.value * 1 || 0;
     insight.cost_per_thruplay =
-        insight?.cost_per_thruplay?.find(a => a.action_type === "video_view").value || 0;
+        insight?.cost_per_thruplay?.find(a => a.action_type === "video_view")?.value || 0;
     insight.cost_per_3_s_plays = insight?.spend / insight?.video_watched_3_s_count || 0;
 
     insight.video_retention_100p_3s =
@@ -147,7 +148,12 @@ const mapAdInsightToInsightDto = insight => {
     else mapAdInsightToInsightDtoPrivate(insight);
     return insight;
 };
-
+const mapAdInsightsToAdsSetInsight = (adSetInsight) => {
+    mapObjectStringFieldToNumberIfPossible(adSetInsight);
+    mapAdInsightToInsightDto(adSetInsight);
+    mapToUndefinedAdsUnusedInsightField(adSetInsight);
+};
 module.exports = {
     mapAdInsightToInsightDto,
+    mapAdInsightsToAdsSetInsight,
 };
