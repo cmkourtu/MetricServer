@@ -10,8 +10,6 @@ const AdInsightsFields = [
     "cpm",
     "ctr",
     "spend",
-    "ad_name",
-    "ad_id",
     "date_start",
     "date_stop",
     "buying_type",
@@ -47,10 +45,34 @@ const AdInsightsFields = [
     "video_play_actions",
     "video_play_curve_actions",
     "website_ctr",
+    "ad_name",
+    "ad_id",
+    "adset_id",
+    "adset_name",
+    "campaign_name",
+    "campaign_id",
+    "action_values",
+    "catalog_segment_value",
+    "conversion_values",
+    "conversions",
+    "converted_product_quantity",
+    "converted_product_value",
+    "cost_per_action_type",
+    "cost_per_conversion",
+    "cost_per_thruplay",
+    "cost_per_outbound_click",
+    // "cost_per_unique_action_type",
+    "cost_per_unique_outbound_click",
+    "instant_experience_outbound_clicks",
+    "mobile_app_purchase_roas",
+    "outbound_clicks",
+    "purchase_roas",
+    "video_play_retention_graph_actions",
+    "video_time_watched_actions",
 ];
 const AdFields = ["name", "id"];
 const AdParam = {
-    breakdown: "age",
+    // breakdown: "age",
 };
 
 // User
@@ -94,7 +116,7 @@ const DailyFilterParam = (startDate, endDate) => {
     return {
         time_range: {since: startDate, until: endDate}, // Період, за який потрібно отримати статистику
         // time_increment: "1",
-        level: "account",
+        level: "ad",
     };
 };
 const TimeFilterParam = (startDate, endDate) => {

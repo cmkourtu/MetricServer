@@ -115,11 +115,6 @@ class MetaApiService {
         return insights.map(insight => insight._data);
     }
 
-    async getAdInsights(adId, fieldFilter) {
-        const insights = await new this.Ad(adId).getInsights(AdInsightsFields, fieldFilter);
-        return insights.map(insight => insight._data);
-    }
-
     async getInsightsByAdId(adId) {
         return this.#getInsightsByIdAndFieldsAndParam(adId, AdInsightsFields, AdParam);
     }
