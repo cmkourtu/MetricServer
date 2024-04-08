@@ -44,11 +44,19 @@ const deleteReport = async reportId => {
         throw new Error(`Unable to delete report: ${error}`);
     }
 };
-
+const getReportsByUserId = async userId => {
+    try {
+        const report = await reportRepository.getReportsByUserId(userId);
+        return report;
+    } catch (error) {
+        throw new Error(`Unable to fetch report: ${error}`);
+    }
+};
 module.exports = {
     createReport,
     getAllReports,
     getReportById,
     updateReport,
     deleteReport,
+    getReportsByUserId,
 };
