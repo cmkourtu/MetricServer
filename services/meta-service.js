@@ -214,6 +214,83 @@ const getAdSetsByUserId = async userId => {
         })
     );
 };
+
+const getAdsWithInsideByUserId = async (userId, type, start, end) => {
+    const facebookAccounts = await findAllByUserId(userId);
+    const validFacebookAccounts = facebookAccounts.filter(fa =>
+        filterDateByDays(fa.accessTokenReceiveTime, 29)
+    );
+    const campaignsData = await Promise.all(
+        validFacebookAccounts.map(async fa => {
+            return await getAllCampaignByFacebookAccount(fa);
+        })
+    );
+    const campaigns = campaignsData.flatMap(cd => {
+        return {
+            facebookAccount: cd.facebookAccount,
+            campaigns: cd.adAccounts.flatMap(a => a.campaigns),
+        };
+    });
+    const campaignsId = (
+        await Promise.all(
+            campaigns.map(c => getAllCampaignByFacebookId(c.facebookAccount.facebookId))
+        )
+    ).map(a => {
+        return {
+            facebookAccount: a.facebookAccount,
+            campaigns: a.adAccounts.flatMap(adAcc => adAcc.campaigns).flatMap(camp => camp.id),
+        };
+    });
+    const adSetsId = await Promise.all(
+        campaignsId.map(async c => {
+            const adSets = await Promise.all(
+                c.campaigns.flatMap(async camp => {
+                    return await getAdSetsByFacebookIdAndCampaignId(
+                        c.facebookAccount.facebookId,
+                        camp
+                    );
+                })
+            );
+            return {
+                facebookAccount: c.facebookAccount,
+                adSets: adSets.flat().map(a => a.id),
+            };
+        })
+    );
+    const ads = await Promise.all(
+        adSetsId.map(async a => {
+            const adsForAdSet = await Promise.all(
+                a.adSets.flatMap(async as => {
+                    return await getAdsByAdSet(a.facebookAccount.facebookId, as);
+                })
+            );
+            return {
+                facebookAccount: a.facebookAccount,
+                ads: adsForAdSet.flat().map(a => a.id),
+            };
+        })
+    );
+
+    return await Promise.all(
+        ads.map(async a => {
+            const insightsForAds = await Promise.all(
+                a.ads.flatMap(async ad => {
+                    return await getAdInsightByAdId(
+                        a.facebookAccount.facebookId,
+                        ad,
+                        type,
+                        start,
+                        end
+                    );
+                })
+            );
+            return {
+                facebookAccount: a.facebookAccount,
+                ads: insightsForAds.flat(),
+            };
+        })
+    );
+};
 module.exports = {
     getAllInsightsByUserId,
     getAllFacebookAccountsByUserId,
@@ -230,4 +307,5 @@ module.exports = {
     getAdSetInsightById,
     getAdPreviewByAdId,
     getAdSetsByUserId,
+    getAdsWithInsideByUserId,
 };
