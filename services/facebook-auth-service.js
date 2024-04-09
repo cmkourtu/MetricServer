@@ -46,7 +46,6 @@ const addFacebookAccountByCode = async (userId, code) => {
         return false;
     }
     const userData = await getFacebookUserData(accessToken);
-    console.log({userData});
     return await saveFacebookAccount(userId, userData, accessToken);
 };
 

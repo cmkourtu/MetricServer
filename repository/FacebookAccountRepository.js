@@ -4,15 +4,29 @@ const {Op} = require("sequelize");
 const saveFacebookAccount = async (userId, metaData, accessToken) => {
     if (!metaData) return false;
     const isExistSameRecord = await isUserHaveThisMetaAccount(userId, metaData.id);
-    if (isExistSameRecord) return false;
-    return await FacebookAccount.create({
-        userId,
-        accessToken,
-        facebookId: metaData.id,
-        firstName: metaData.first_name,
-        lastName: metaData.last_name,
-        accessTokenReceiveTime: Date.now(),
-    });
+    if (isExistSameRecord) {
+        return await FacebookAccount.update(
+            {
+                accessToken: accessToken,
+                accessTokenReceiveTime: Date.now(),
+            },
+            {
+                where: {
+                    userId,
+                    facebookId: metaData.id,
+                },
+            }
+        );
+    } else {
+        return await FacebookAccount.create({
+            userId,
+            accessToken,
+            facebookId: metaData.id,
+            firstName: metaData.first_name,
+            lastName: metaData.last_name,
+            accessTokenReceiveTime: Date.now(),
+        });
+    }
 };
 const findAllByUserId = async userId => {
     return (
