@@ -4,7 +4,9 @@ const {
     getAdSetsInsightsByFacebookIdAndCampaignId,
     getAdsByAdSet,
     getAdSetInsightById,
+    getAdSetsByUserId,
 } = require("../../services/meta-service");
+const {filterDateByDays} = require("../../utill/filter");
 const router = require("express").Router();
 
 /**
@@ -89,5 +91,16 @@ router.get(
         await res.json(await getAdSetInsightById(facebookId, adSetId, type, start, end));
     }
 );
-
+/**
+ * GET /api/facebook/adsets/user/:userId
+ * @summary Get all campaign insights by facebookId and campaignId
+ * @tags Facebook adSets
+ * @param {string} userId.path - userId
+ * @return {object} 200 - Result
+ */
+router.get("/user/:userId", passport.authenticate("jwt"), async (req, res) => {
+    const {userId} = req.params;
+    const adSets = await getAdSetsByUserId(userId);
+    res.json(adSets);
+});
 module.exports = router;

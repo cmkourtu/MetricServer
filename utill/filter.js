@@ -8,5 +8,12 @@ const userUpdateFilterFields = data => {
     });
     return filteredData;
 };
+const filterDateByDays = (date, days) => {
+    const currentDate = new Date();
+    const targetDate = new Date(date);
+    const differenceInTime = currentDate.getTime() - targetDate.getTime();
+    const differenceInDays = differenceInTime / (1000 * 3600 * 24);
+    return differenceInDays <= days;
+};
 
-module.exports = {userUpdateFilterFields};
+module.exports = {userUpdateFilterFields, filterDateByDays};

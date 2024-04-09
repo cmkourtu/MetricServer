@@ -1,6 +1,7 @@
 const MetaApiService = require("./meta-api/MetaApiService");
 const {findAllByUserId, findByFacebookId} = require("../repository/FacebookAccountRepository");
 const {mapAdInsightToInsightDto, mapAdInsightsToAdsSetInsight} = require("../utill/mapper");
+const {filterDateByDays} = require("../utill/filter");
 
 const getAllInsightsByUserId = async (userId, type, start, end) => {
     const userMetaAccounts = await findAllByUserId(userId);
@@ -46,9 +47,19 @@ const getAllCampaignByFacebookId = async facebookId => {
     const campaigns = [];
     for (let i = 0; i < userAdsAccounts.length; i++) {
         const adAccount = userAdsAccounts[i];
-        console.log(adAccount);
         const userAdAccountsByMetaAccount = await metaApi.getCampaignByAccountId(adAccount.id);
-        console.log(userAdAccountsByMetaAccount);
+        campaigns.push({adAccount, campaigns: userAdAccountsByMetaAccount});
+    }
+    const facebookAccount = mapFacebookAccountToDto(userMetaAccount);
+    return {facebookAccount, adAccounts: campaigns};
+};
+const getAllCampaignByFacebookAccount = async userMetaAccount => {
+    const metaApi = new MetaApiService(userMetaAccount.accessToken);
+    const userAdsAccounts = await metaApi.getUserBusinessAccounts();
+    const campaigns = [];
+    for (let i = 0; i < userAdsAccounts.length; i++) {
+        const adAccount = userAdsAccounts[i];
+        const userAdAccountsByMetaAccount = await metaApi.getCampaignByAccountId(adAccount.id);
         campaigns.push({adAccount, campaigns: userAdAccountsByMetaAccount});
     }
     const facebookAccount = mapFacebookAccountToDto(userMetaAccount);
@@ -108,6 +119,18 @@ const getAdSetsByFacebookIdAndCampaignId = async (facebookId, campaignId) => {
     const metaApi = new MetaApiService(userMetaAccount.accessToken);
     return metaApi.getCampaignAdSets(campaignId);
 };
+const getAdSetsWithInsightsAndAdsByFacebookIdAndCampaignId = async (facebookId, campaignId) => {
+    const userMetaAccount = await findByFacebookId(facebookId);
+    const metaApi = new MetaApiService(userMetaAccount.accessToken);
+    const campaignAdSets = await metaApi.getCampaignAdSets(campaignId);
+    return await Promise.all(
+        campaignAdSets.map(async a => {
+            const insights = await getAdSetInsightById(facebookId, a.id, null, null, null);
+            const ads = await getAdsByAdSet(facebookId, a.id);
+            return {adSet: a, insights, ads};
+        })
+    );
+};
 const getAdSetsInsightsByFacebookIdAndCampaignId = async (
     facebookId,
     campaignId,
@@ -159,6 +182,37 @@ const getAdPreviewByAdId = async (facebookId, adId) => {
     const metaApi = new MetaApiService(userMetaAccount.accessToken);
     return await metaApi.getAdPreview(adId);
 };
+
+const getAdSetsByUserId = async userId => {
+    const facebookAccounts = await findAllByUserId(userId);
+    const validFacebookAccounts = facebookAccounts.filter(fa =>
+        filterDateByDays(fa.accessTokenReceiveTime, 29)
+    );
+    const campaignsData = await Promise.all(
+        validFacebookAccounts.map(async fa => {
+            return await getAllCampaignByFacebookAccount(fa);
+        })
+    );
+    const campaigns = campaignsData.flatMap(cd => {
+        return {
+            facebookAccount: cd.facebookAccount,
+            campaigns: cd.adAccounts.flatMap(a => a.campaigns),
+        };
+    });
+    return await Promise.all(
+        campaigns.map(async c => {
+            const adSetsByFacebookAccount = await Promise.all(
+                c.campaigns.flatMap(async campaign => {
+                    return await getAdSetsWithInsightsAndAdsByFacebookIdAndCampaignId(
+                        c.facebookAccount.facebookId,
+                        campaign.id
+                    );
+                })
+            );
+            return {facebookAccount: c.facebookAccount, adSets: adSetsByFacebookAccount.flat()};
+        })
+    );
+};
 module.exports = {
     getAllInsightsByUserId,
     getAllFacebookAccountsByUserId,
@@ -174,4 +228,5 @@ module.exports = {
     getAdInsightByAdId,
     getAdSetInsightById,
     getAdPreviewByAdId,
+    getAdSetsByUserId,
 };
