@@ -152,8 +152,9 @@ const getAdSetsInsightsByFacebookIdAndCampaignId = async (
     return adSetsInsights;
 };
 const mapFacebookAccountToDto = userMetaAccount => {
-    const {facebookId, firstName, lastName} = userMetaAccount;
-    return {facebookId, firstName, lastName};
+    const {facebookId, firstName, lastName, accessTokenReceiveTime} = userMetaAccount;
+    const isActiveToken = filterDateByDays(accessTokenReceiveTime, 29);
+    return {facebookId, firstName, lastName, isActiveToken};
 };
 
 const getAdsByAdSet = async (facebookId, adSetId) => {
