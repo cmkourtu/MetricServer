@@ -155,16 +155,17 @@ class MetaApiService {
     }
     async getAdPreview(adId) {
         try {
-            const preview = await new this.Ad(adId).getPreviews({}, {
+            const preview = await new this.Ad(adId).getPreviews([], {
                 ad_format: 'MOBILE_FEED_STANDARD' //DESKTOP_FEED_STANDARD
             });
             return preview[0]._data.body;
         } catch (err) {
-            console.error("getAdPreview", err);
-            return null;
+            console.error("getAdPreview", );
+            const code = err.response.code;
+            const message = code === 80004 ? "Too many request!" : code === 190 ? "Auth error!" : "Something went wrong"
+            return message;
         }
     }
-
 
 }
 
