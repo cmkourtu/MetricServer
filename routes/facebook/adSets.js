@@ -100,7 +100,9 @@ router.get(
  */
 router.get("/user/:userId", passport.authenticate("jwt"), async (req, res) => {
     const {userId} = req.params;
-    const adSets = await getAdSetsByUserId(userId);
+    const {type, start, end} = req.query;
+    const adSets = await getAdSetsByUserId(userId, type, start, end);
     res.json(adSets);
 });
+
 module.exports = router;

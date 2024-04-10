@@ -119,13 +119,19 @@ const getAdSetsByFacebookIdAndCampaignId = async (facebookId, campaignId) => {
     const metaApi = new MetaApiService(userMetaAccount.accessToken);
     return metaApi.getCampaignAdSets(campaignId);
 };
-const getAdSetsWithInsightsAndAdsByFacebookIdAndCampaignId = async (facebookId, campaignId) => {
+const getAdSetsWithInsightsAndAdsByFacebookIdAndCampaignId = async (
+    facebookId,
+    campaignId,
+    type,
+    start,
+    end
+) => {
     const userMetaAccount = await findByFacebookId(facebookId);
     const metaApi = new MetaApiService(userMetaAccount.accessToken);
     const campaignAdSets = await metaApi.getCampaignAdSets(campaignId);
     return await Promise.all(
         campaignAdSets.map(async a => {
-            const insights = await getAdSetInsightById(facebookId, a.id, null, null, null);
+            const insights = await getAdSetInsightById(facebookId, a.id, type, start, end);
             const ads = await getAdsByAdSet(facebookId, a.id);
             return {adSet: a, insights, ads};
         })
@@ -184,7 +190,7 @@ const getAdPreviewByAdId = async (facebookId, adId) => {
     return await metaApi.getAdPreview(adId);
 };
 
-const getAdSetsByUserId = async userId => {
+const getAdSetsByUserId = async (userId, type, start, end) => {
     const facebookAccounts = await findAllByUserId(userId);
     const validFacebookAccounts = facebookAccounts.filter(fa =>
         filterDateByDays(fa.accessTokenReceiveTime, 29)
@@ -206,7 +212,10 @@ const getAdSetsByUserId = async userId => {
                 c.campaigns.flatMap(async campaign => {
                     return await getAdSetsWithInsightsAndAdsByFacebookIdAndCampaignId(
                         c.facebookAccount.facebookId,
-                        campaign.id
+                        campaign.id,
+                        type,
+                        start,
+                        end
                     );
                 })
             );
