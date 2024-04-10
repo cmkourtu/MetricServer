@@ -166,7 +166,17 @@ class MetaApiService {
             return message;
         }
     }
-
+    async getAdPreviewIcon(adId) {
+        try {
+            const adCreatives = await new this.Ad(adId).getAdCreatives(["thumbnail_url"]);
+            return adCreatives[0]._data.thumbnail_url;
+        } catch (err) {
+            console.error("getAdPreview", );
+            const code = err
+            console.log(err )
+            return err;
+        }
+    }
 }
 
 module.exports = MetaApiService;

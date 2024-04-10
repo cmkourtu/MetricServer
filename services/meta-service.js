@@ -189,7 +189,11 @@ const getAdPreviewByAdId = async (facebookId, adId) => {
     const metaApi = new MetaApiService(userMetaAccount.accessToken);
     return await metaApi.getAdPreview(adId);
 };
-
+const getAdPreviewByAdIdIcon = async (facebookId, adId) => {
+    const userMetaAccount = await findByFacebookId(facebookId);
+    const metaApi = new MetaApiService(userMetaAccount.accessToken);
+    return await metaApi.getAdPreviewIcon(adId);
+};
 const getAdSetsByUserId = async (userId, type, start, end) => {
     const facebookAccounts = await findAllByUserId(userId);
     const validFacebookAccounts = facebookAccounts.filter(fa =>
@@ -317,4 +321,5 @@ module.exports = {
     getAdPreviewByAdId,
     getAdSetsByUserId,
     getAdsWithInsideByUserId,
+    getAdPreviewByAdIdIcon,
 };
