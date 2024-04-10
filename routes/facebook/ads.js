@@ -1,5 +1,5 @@
 const passport = require("passport");
-const {getAdInsightByAdId, getAdPreviewByAdId, getAdsWithInsideByUserId} = require("../../services/meta-service");
+const {getAdInsightByAdId, getAdPreviewByAdId, getAdsWithInsideByUserId, getAdPreviewByAdIdIcon} = require("../../services/meta-service");
 const router = require("express").Router();
 /**
  * GET /api/facebook/ads/insight/facebook/:facebookId/ad/:adId
@@ -35,6 +35,22 @@ router.get(
     async (req, res) => {
         const {adId, facebookId} = req.params;
         await res.send(await getAdPreviewByAdId(facebookId, adId));
+    }
+);
+/**
+ * GET /api/facebook/ads/insight/facebook/:facebookId/ad/:adId/preview/icon
+ * @summary Get ad preview by facebook id and ad id
+ * @tags Facebook Ads
+ * @param {string} facebookId.path - Facebook ID of the account
+ * @param {string} adId.path - Ad ID
+ * @return {object} 200 - Result (IFrame)
+ */
+router.get(
+    "/insight/facebook/:facebookId/ad/:adId/preview/icon",
+    passport.authenticate("jwt"),
+    async (req, res) => {
+        const {adId, facebookId} = req.params;
+        await res.send(await getAdPreviewByAdIdIcon(facebookId, adId));
     }
 );
 /**
