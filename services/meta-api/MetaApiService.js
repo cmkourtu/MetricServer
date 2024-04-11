@@ -130,7 +130,7 @@ class MetaApiService {
             return businessAccounts.map(acc => acc._data);
         } catch (err) {
             console.error("getUserBusinessAccounts", err);
-            return null;
+            return [];
         }
     }
 
