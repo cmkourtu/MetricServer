@@ -133,7 +133,12 @@ const getAdSetsWithInsightsAndAdsByFacebookIdAndCampaignId = async (
         campaignAdSets.map(async a => {
             const insights = await getAdSetInsightById(facebookId, a.id, type, start, end);
             const ads = await getAdsByAdSet(facebookId, a.id);
-            return {adSet: a, insights, ads};
+            let icon = "";
+            if (ads.length > 0) {
+                const ad = ads[0];
+                icon = await getAdPreviewByAdIdIcon(facebookId, ad.id);
+            }
+            return {adSet: a, insights, ads, icon};
         })
     );
 };
@@ -152,7 +157,6 @@ const getAdSetsInsightsByFacebookIdAndCampaignId = async (
     for (let i = 0; i < adSets.length; i++) {
         const adSet = adSets[i];
         const adSetInsights = await metaApi.getAdSetsInsights(adSet.id, filter);
-        console.log({adSet, adSetInsights});
         adSetsInsights.push({adSet, insights: adSetInsights});
     }
     return adSetsInsights;
