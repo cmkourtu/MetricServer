@@ -203,11 +203,15 @@ const getAdSetsByUserId = async (userId, type, start, end) => {
     const validFacebookAccounts = facebookAccounts.filter(fa =>
         filterDateByDays(fa.accessTokenReceiveTime, 29)
     );
-    const campaignsData = await Promise.all(
-        validFacebookAccounts.map(async fa => {
-            return await getAllCampaignByFacebookAccount(fa);
-        })
-    );
+    const campaignsData = [];
+    for (const fa of validFacebookAccounts) {
+        try {
+            const data = await getAllCampaignByFacebookAccount(fa);
+            campaignsData.push(data);
+        } catch (error) {
+            console.error(`Error fetching data for account ${fa}:`, error);
+        }
+    }
     const campaigns = campaignsData.flatMap(cd => {
         return {
             facebookAccount: cd.facebookAccount,
@@ -237,11 +241,15 @@ const getAdsWithInsideByUserId = async (userId, type, start, end) => {
     const validFacebookAccounts = facebookAccounts.filter(fa =>
         filterDateByDays(fa.accessTokenReceiveTime, 29)
     );
-    const campaignsData = await Promise.all(
-        validFacebookAccounts.map(async fa => {
-            return await getAllCampaignByFacebookAccount(fa);
-        })
-    );
+    const campaignsData = [];
+    for (const fa of validFacebookAccounts) {
+        try {
+            const data = await getAllCampaignByFacebookAccount(fa);
+            campaignsData.push(data);
+        } catch (error) {
+            console.error(`Error fetching data for account ${fa}:`, error);
+        }
+    }
     const campaigns = campaignsData.flatMap(cd => {
         return {
             facebookAccount: cd.facebookAccount,
