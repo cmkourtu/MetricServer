@@ -2,6 +2,11 @@ const MetaApiService = require("./meta-api/MetaApiService");
 const {findAllByUserId, findByFacebookId} = require("../repository/FacebookAccountRepository");
 const {mapAdInsightToInsightDto, mapAdInsightsToAdsSetInsight} = require("../utill/mapper");
 const {filterDateByDays} = require("../utill/filter");
+const {
+    getCacheReportInsightByReportId,
+    cacheAdSetsInsightReportByUserId,
+} = require("./cache-service");
+const {getReportById} = require("./reports-service");
 
 const getAllInsightsByUserId = async (userId, type, start, end) => {
     const userMetaAccounts = await findAllByUserId(userId);
@@ -316,6 +321,25 @@ const getAdsWithInsideByUserId = async (userId, type, start, end) => {
         })
     );
 };
+const getCachedAdSetReportInsightReportId = async (
+    reportId,
+    type,
+    start,
+    end,
+    needToUpdate = false
+) => {
+    const insightFromDb = await getCacheReportInsightByReportId(reportId);
+    let insight;
+    if (insightFromDb.length === 0 || needToUpdate) {
+        const report = await getReportById(reportId);
+        if (!report) return [];
+        const userId = report.userId;
+        insight = await cacheAdSetsInsightReportByUserId(userId, reportId, type, start, end);
+    } else {
+        insight = insightFromDb.insight;
+    }
+    return insight;
+};
 module.exports = {
     getAllInsightsByUserId,
     getAllFacebookAccountsByUserId,
@@ -334,4 +358,5 @@ module.exports = {
     getAdSetsByUserId,
     getAdsWithInsideByUserId,
     getAdPreviewByAdIdIcon,
+    getCachedAdSetReportInsightReportId,
 };
