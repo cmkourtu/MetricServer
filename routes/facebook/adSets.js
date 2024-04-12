@@ -115,7 +115,7 @@ router.get("/user/:userId", passport.authenticate("jwt"), async (req, res) => {
 router.get("/report/:reportId", passport.authenticate("jwt"), async (req, res) => {
     const {reportId} = req.params;
     const {type, start, end} = req.query;
-    const adSets = await getCachedAdSetReportInsightReportId(reportId, type, start, end);
+    const adSets = await getCachedAdSetReportInsightReportId(reportId, type, start, end, false);
     res.json(adSets);
 });
 /**
