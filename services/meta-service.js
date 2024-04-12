@@ -335,6 +335,7 @@ const getCachedAdSetReportInsightReportId = async (
         if (!report) return [];
         const userId = report.userId;
         insight = await cacheAdSetsInsightReportByUserId(userId, reportId, type, start, end);
+        insight.push({updatedAt: new Date()});
     } else {
         insight = insightFromDb.insight;
     }

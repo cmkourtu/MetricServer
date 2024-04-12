@@ -39,20 +39,12 @@ const cacheAdsInsightReportByUserId = async (userId, reportId, type, start, end)
     }
 };
 
-const getCacheReportInsightByUserId = async userId => {
-    try {
-        const insights = JSON.parse(await getByIdAdSetReportInsight(userId));
-        if (insights) return insights;
-        else return [];
-    } catch (err) {
-        return [];
-    }
-};
 const getCacheReportInsightByReportId = async reportId => {
     try {
         const insights = await getByReportIdAdSetReportInsight(reportId);
         if (insights) {
             insights.insight = JSON.parse(insights.insight);
+            insights.insight.push({updatedAt: insights.dataValues.updatedAt});
             return insights;
         } else return [];
     } catch (err) {
@@ -64,6 +56,5 @@ const getCacheReportInsightByReportId = async reportId => {
 module.exports = {
     cacheAdSetsInsightReportByUserId,
     cacheAdsInsightReportByUserId,
-    getCacheReportInsightByUserId,
     getCacheReportInsightByReportId,
 };
