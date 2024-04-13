@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const reportService = require("../services/reports-service");
+const {cacheAdSetsInsightReportByUserId} = require("../services/cache-service");
+const passport = require("passport");
 
 /**
  * @typedef {object} ReportData
@@ -103,9 +105,15 @@ router.get("/user/:userId", async (req, res) => {
  * @return {string} 404 - Report not found
  * @security JWT
  */
-router.put("/:reportId", async (req, res) => {
+router.put("/:reportId",  passport.authenticate("jwt"),async (req, res) => {
     const reportId = req.params.reportId;
+    const userId = req.user.id;
     try {
+        const oldReport = await reportService.getReportById(reportId);
+        if(!(oldReport.startDate === req.body.startDate && oldReport.endDate === req.body.endDate)){
+            const {startDate, endDate} = req.body;
+            await cacheAdSetsInsightReportByUserId(userId, reportId, "date", startDate, endDate);
+        }
         const report = await reportService.updateReport(reportId, req.body);
         res.json(report);
     } catch (error) {

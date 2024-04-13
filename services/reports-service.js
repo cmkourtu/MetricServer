@@ -1,8 +1,12 @@
 const reportRepository = require("../repository/ReportRepository");
+const {cacheAdSetsInsightReportByUserId} = require("./cache-service");
 
 const createReport = async reportData => {
     try {
         const report = await reportRepository.createReport(reportData);
+        const reportId = report.id;
+        const {startDate, endDate, userId} = reportData;
+        await cacheAdSetsInsightReportByUserId(userId, reportId, "date", startDate, endDate);
         return report;
     } catch (error) {
         throw new Error(`Unable to create report: ${error}`);
