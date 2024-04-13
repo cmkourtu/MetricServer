@@ -19,7 +19,7 @@ const passport = require("passport");
  * @return {string} 400 - Invalid request body
  * @security JWT
  */
-router.post("/", async (req, res) => {
+router.post("/", passport.authenticate("jwt"),async (req, res) => {
     try {
         const report = await reportService.createReport(req.body);
         res.status(201).json(report);
@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
  * @return {Array<Report>} 200 - Array of reports
  * @security JWT
  */
-router.get("/", async (req, res) => {
+router.get("/", passport.authenticate("jwt"),async (req, res) => {
     try {
         const reports = await reportService.getAllReports();
         res.json(reports);
@@ -55,7 +55,7 @@ router.get("/", async (req, res) => {
  * @return {string} 404 - Report not found
  * @security JWT
  */
-router.get("/:reportId", async (req, res) => {
+router.get("/:reportId", passport.authenticate("jwt"),async (req, res) => {
     const reportId = req.params.reportId;
     try {
         const report = await reportService.getReportById(reportId);
@@ -79,7 +79,7 @@ router.get("/:reportId", async (req, res) => {
  * @return {string} 404 - User not found
  * @security JWT
  */
-router.get("/user/:userId", async (req, res) => {
+router.get("/user/:userId", passport.authenticate("jwt"),async (req, res) => {
     const userId = req.params.userId;
     try {
         const reports = await reportService.getReportsByUserId(userId);
@@ -131,7 +131,7 @@ router.put("/:reportId",  passport.authenticate("jwt"),async (req, res) => {
  * @return {string} 404 - Report not found
  * @security JWT
  */
-router.delete("/:reportId", async (req, res) => {
+router.delete("/:reportId", passport.authenticate("jwt"),async (req, res) => {
     const reportId = req.params.reportId;
     try {
         await reportService.deleteReport(reportId);
