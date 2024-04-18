@@ -16,6 +16,11 @@ const createReport = async reportData => {
 const getAllReports = async () => {
     try {
         const reports = await reportRepository.getAllReports();
+        reports.map(report => {
+            report.metrics = report.metrics ? report.metrics : [];
+            report.adSets = report.adSets ? report.adSets : [];
+            return report;
+        });
         return reports;
     } catch (error) {
         throw new Error(`Unable to fetch reports: ${error}`);
@@ -25,6 +30,10 @@ const getAllReports = async () => {
 const getReportById = async reportId => {
     try {
         const report = await reportRepository.getReportById(reportId);
+        if (report) {
+            report.metrics = report.metrics ? report.metrics : [];
+            report.adSets = report.adSets ? report.adSets : [];
+        }
         return report;
     } catch (error) {
         throw new Error(`Unable to fetch report: ${error}`);
@@ -34,6 +43,10 @@ const getReportById = async reportId => {
 const updateReport = async (reportId, reportData) => {
     try {
         const updatedReport = await reportRepository.updateReport(reportId, reportData);
+        if (updatedReport) {
+            updatedReport.metrics = updatedReport.metrics ? updatedReport.metrics : [];
+            updatedReport.adSets = updatedReport.adSets ? updatedReport.adSets : [];
+        }
         return updatedReport;
     } catch (error) {
         throw new Error(`Unable to update report: ${error}`);
