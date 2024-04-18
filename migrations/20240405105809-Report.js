@@ -34,6 +34,12 @@ module.exports = {
             groupBy: {
                 type: Sequelize.STRING,
             },
+            chosenMetrics: {
+                type: Sequelize.TEXT,
+            },
+            chosenAdSets: {
+                type: Sequelize.TEXT,
+            },
             userId: {
                 type: Sequelize.UUID,
                 allowNull: false,

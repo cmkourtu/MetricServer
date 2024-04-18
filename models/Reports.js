@@ -48,6 +48,12 @@ module.exports = (sequelize, DataTypes) => {
             groupBy: {
                 type: DataTypes.STRING,
             },
+            chosenMetrics: {
+                type: DataTypes.TEXT,
+            },
+            chosenAdSets: {
+                type: DataTypes.TEXT,
+            },
             userId: {
                 type: DataTypes.UUID,
                 allowNull: false,

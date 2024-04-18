@@ -7,6 +7,16 @@ const createReport = async reportData => {
         const reportId = report.id;
         const {startDate, endDate, userId} = reportData;
         await cacheAdSetsInsightReportByUserId(userId, reportId, "date", startDate, endDate);
+        if (report) {
+            report.metrics = report.metrics ? report.metrics : [];
+            report.adSets = report.adSets ? report.adSets : [];
+            report.chosenAdSets = report.chosenAdSets
+                ? JSON.parse(report.chosenAdSets)
+                : null;
+            report.chosenMetrics = report.chosenMetrics
+                ? JSON.parse(report.chosenMetrics)
+                : null;
+        }
         return report;
     } catch (error) {
         throw new Error(`Unable to create report: ${error}`);
@@ -19,6 +29,12 @@ const getAllReports = async () => {
         reports.map(report => {
             report.metrics = report.metrics ? report.metrics : [];
             report.adSets = report.adSets ? report.adSets : [];
+            report.chosenAdSets = report.chosenAdSets
+                ? JSON.parse(report.chosenAdSets)
+                : null;
+            report.chosenMetrics = report.chosenMetrics
+                ? JSON.parse(report.chosenMetrics)
+                : null;
             return report;
         });
         return reports;
@@ -33,6 +49,12 @@ const getReportById = async reportId => {
         if (report) {
             report.metrics = report.metrics ? report.metrics : [];
             report.adSets = report.adSets ? report.adSets : [];
+            report.chosenAdSets = report.chosenAdSets
+                ? JSON.parse(report.chosenAdSets)
+                : null;
+            report.chosenMetrics = report.chosenMetrics
+                ? JSON.parse(report.chosenMetrics)
+                : null;
         }
         return report;
     } catch (error) {
@@ -42,10 +64,22 @@ const getReportById = async reportId => {
 
 const updateReport = async (reportId, reportData) => {
     try {
+        reportData.chosenAdSets = reportData.chosenAdSets
+            ? JSON.stringify(reportData.chosenAdSets)
+            : null;
+        reportData.chosenMetrics = reportData.chosenMetrics
+            ? JSON.stringify(reportData.chosenMetrics)
+            : null;
         const updatedReport = await reportRepository.updateReport(reportId, reportData);
         if (updatedReport) {
             updatedReport.metrics = updatedReport.metrics ? updatedReport.metrics : [];
             updatedReport.adSets = updatedReport.adSets ? updatedReport.adSets : [];
+            updatedReport.chosenAdSets = updatedReport.chosenAdSets
+                ? JSON.parse(updatedReport.chosenAdSets)
+                : null;
+            updatedReport.chosenMetrics = updatedReport.chosenMetrics
+                ? JSON.parse(updatedReport.chosenMetrics)
+                : null;
         }
         return updatedReport;
     } catch (error) {
@@ -63,8 +97,19 @@ const deleteReport = async reportId => {
 };
 const getReportsByUserId = async userId => {
     try {
-        const report = await reportRepository.getReportsByUserId(userId);
-        return report;
+        const reports = await reportRepository.getReportsByUserId(userId);
+        reports.map(report => {
+            report.metrics = report.metrics ? report.metrics : [];
+            report.adSets = report.adSets ? report.adSets : [];
+            report.chosenAdSets = report.chosenAdSets
+                ? JSON.parse(report.chosenAdSets)
+                : null;
+            report.chosenMetrics = report.chosenMetrics
+                ? JSON.parse(report.chosenMetrics)
+                : null;
+            return report;
+        });
+        return reports;
     } catch (error) {
         throw new Error(`Unable to fetch report: ${error}`);
     }
