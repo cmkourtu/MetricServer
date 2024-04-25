@@ -1,8 +1,11 @@
 const passport = require("passport");
-const {getAllCampaignByAdAccountIdAndFacebookId, getAllCampaignByFacebookId, getAllCampaignByFacebookIdInsights,
-    getAllCampaignByAdAccountIdAndFacebookIdInsights
+const {
+    getAllCampaignByAdAccountIdAndFacebookId,
+    getAllCampaignByFacebookId,
+    getAllCampaignByFacebookIdInsights,
+    getAllCampaignByAdAccountIdAndFacebookIdInsights,
 } = require("../../services/meta-service");
-const router = require('express').Router();
+const router = require("express").Router();
 
 /**
  * GET /api/facebook/campaigns/facebook/insights/:facebookId
@@ -14,11 +17,11 @@ const router = require('express').Router();
  * @param {string} end.query - Filter end date
  * @return {object} 200 - Result
  */
-router.get("/facebook/insights/:facebookId", passport.authenticate('jwt'), async (req, res) => {
+router.get("/facebook/insights/:facebookId", passport.authenticate("jwt"), async (req, res) => {
     const facebookId = req.params.facebookId;
     const {type, start, end} = req.query;
     await res.json(await getAllCampaignByFacebookIdInsights(facebookId, type, start, end));
-})
+});
 
 /**
  * GET /api/facebook/campaigns/facebook/insights/:facebookId/:adAccountId
@@ -31,11 +34,23 @@ router.get("/facebook/insights/:facebookId", passport.authenticate('jwt'), async
  * @param {string} end.query - Filter end date
  * @return {object} 200 - Result
  */
-router.get("/facebook/insights/:facebookId/:adAccountId", passport.authenticate('jwt'), async (req, res) => {
-    const {adAccountId, facebookId} = req.params;
-    const {type, start, end} = req.query;
-    await res.json(await getAllCampaignByAdAccountIdAndFacebookIdInsights(facebookId, adAccountId, type, start, end));
-})
+router.get(
+    "/facebook/insights/:facebookId/:adAccountId",
+    passport.authenticate("jwt"),
+    async (req, res) => {
+        const {adAccountId, facebookId} = req.params;
+        const {type, start, end} = req.query;
+        await res.json(
+            await getAllCampaignByAdAccountIdAndFacebookIdInsights(
+                facebookId,
+                adAccountId,
+                type,
+                start,
+                end
+            )
+        );
+    }
+);
 
 /**
  * GET /api/facebook/campaigns/facebook/:facebookId
@@ -44,11 +59,10 @@ router.get("/facebook/insights/:facebookId/:adAccountId", passport.authenticate(
  * @param {string} facebookId.path - Facebook ID of the account
  * @return {object} 200 - Result
  */
-router.get("/facebook/:facebookId", passport.authenticate('jwt'), async (req, res) => {
+router.get("/facebook/:facebookId", passport.authenticate("jwt"), async (req, res) => {
     const facebookId = req.params.facebookId;
     res.json(await getAllCampaignByFacebookId(facebookId));
-
-})
+});
 
 /**
  * GET /api/facebook/campaigns/facebook/:facebookId/:adAccountId
@@ -58,9 +72,9 @@ router.get("/facebook/:facebookId", passport.authenticate('jwt'), async (req, re
  * @param {string} adAccountId.path - adAccount ID
  * @return {object} 200 - Result
  */
-router.get("/facebook/:facebookId/:adAccountId", passport.authenticate('jwt'), async (req, res) => {
+router.get("/facebook/:facebookId/:adAccountId", passport.authenticate("jwt"), async (req, res) => {
     const {adAccountId, facebookId} = req.params;
     await res.json(await getAllCampaignByAdAccountIdAndFacebookId(facebookId, adAccountId));
-})
+});
 
 module.exports = router;

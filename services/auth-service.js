@@ -1,5 +1,5 @@
-const { User } = require('../models');
-const { createAndSaveAuthTokens } = require('../helpers/tokens');
+const {User} = require("../models");
+const {createAndSaveAuthTokens} = require("../helpers/tokens");
 
 const registerUser = async (email, password, firstName, lastName, companyName, req) => {
     let tokenData;
@@ -18,4 +18,4 @@ const registerUser = async (email, password, firstName, lastName, companyName, r
     return tokenData;
 };
 
-module.exports = { registerUser };
+module.exports = {registerUser};

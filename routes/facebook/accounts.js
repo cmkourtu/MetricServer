@@ -1,6 +1,10 @@
 const passport = require("passport");
-const {getAllAdsAccountsByUserId, getAllAdsAccountsByFacebookId, getAllFacebookAccountsByUserId} = require("../../services/meta-service");
-const router = require('express').Router();
+const {
+    getAllAdsAccountsByUserId,
+    getAllAdsAccountsByFacebookId,
+    getAllFacebookAccountsByUserId,
+} = require("../../services/meta-service");
+const router = require("express").Router();
 /**
  * @typedef {object} FacebookAccountResponse
  * @property {string} facebookId
@@ -25,10 +29,10 @@ const router = require('express').Router();
  * @tags Facebook Accounts
  * @return {Array<FacebookAccountResponse>} 200 - Facebook accounts
  */
-router.get("/facebook", passport.authenticate('jwt'), async (req, res) => {
+router.get("/facebook", passport.authenticate("jwt"), async (req, res) => {
     const userId = req.user.id;
     res.json(await getAllFacebookAccountsByUserId(userId));
-})
+});
 
 /**
  * GET /api/facebook/accounts/ad
@@ -36,10 +40,10 @@ router.get("/facebook", passport.authenticate('jwt'), async (req, res) => {
  * @tags Facebook Accounts
  * @return {Array<BusinessAccountResponse>} 200 - Ad Accounts
  */
-router.get("/ad", passport.authenticate('jwt'), async (req, res) => {
+router.get("/ad", passport.authenticate("jwt"), async (req, res) => {
     const userId = req.user.id;
     await res.json(await getAllAdsAccountsByUserId(userId));
-})
+});
 
 /**
  * GET /api/facebook/accounts/ad/:facebookId
@@ -48,8 +52,8 @@ router.get("/ad", passport.authenticate('jwt'), async (req, res) => {
  * @param {string} facebookId.path - Facebook ID of the account
  * @return {BusinessAccountResponse} 200 - Ad accounts
  */
-router.get("/ad/:facebookId", passport.authenticate('jwt'), async (req, res) => {
+router.get("/ad/:facebookId", passport.authenticate("jwt"), async (req, res) => {
     const metaId = req.params.facebookId;
     await res.json(await getAllAdsAccountsByFacebookId(metaId));
-})
+});
 module.exports = router;

@@ -8,13 +8,13 @@ const {
     CampaignsFields,
     FilterParam,
     AdFields,
-} = require("../../utils/constants");
+} = require("../../utill/constants");
 
 class MetaApiService {
     constructor(accessToken) {
         this.accessToken = accessToken;
         this.api = bizSdk.FacebookAdsApi.init(accessToken);
-        this.Facebook = new FB({graphVersion: "v8.0"});
+        this.Facebook = new FB({graphVersion: "v19.0"});
         // this.api.setDebug(
         //   process.env.META_API_DEBUG ? process.env.META_API_DEBUG : false
         // );
@@ -29,12 +29,13 @@ class MetaApiService {
     async getAllUserInsights() {
         return this.getUserInsightsGroupedByDate();
     }
-    getFilter(startDate, endDate, type){
+
+    getFilter(startDate, endDate, type) {
         return FilterParam(startDate, endDate, type);
     }
 
     async getUserInsightsGroupedByDate(startDate, endDate, type) {
-        const fieldFilter = this.getFilter(startDate, endDate, type)
+        const fieldFilter = this.getFilter(startDate, endDate, type);
         const businessAccounts = await this.getUserBusinessAccounts();
 
         const campaignsInsights = await Promise.all(
@@ -45,11 +46,13 @@ class MetaApiService {
         );
         return campaignsInsights;
     }
-    async getCampaignByAccountId(accountId)  {
+
+    async getCampaignByAccountId(accountId) {
         return (await new this.AdAccount(accountId).getCampaigns(CampaignsFields)).map(
             campaign => campaign._data
         );
     }
+
     async getCampaignsWithInsights(accountId, fieldFilter) {
         const campaigns = await this.getCampaignByAccountId(accountId);
 
@@ -60,10 +63,13 @@ class MetaApiService {
             })
         );
     }
-    async getCampaignAdSets(campaignId) {
-        return (await new this.Campaign(campaignId).getAdSets(CampaignsFields)).map(adset=>adset._data);
 
+    async getCampaignAdSets(campaignId) {
+        return (await new this.Campaign(campaignId).getAdSets(CampaignsFields)).map(
+            adset => adset._data
+        );
     }
+
     async getCampaignAdSetsWithInsight(campaign, fieldFilter) {
         const campaignId = typeof campaign === "object" ? campaign.id : campaign;
         const adSets = await this.getCampaignAdSets(campaignId);
@@ -75,10 +81,12 @@ class MetaApiService {
             })
         );
     }
+
     async getAdsByAdSet(adSetId) {
         const ads = await new this.AdSet(adSetId).getAds(AdFields);
         return ads.map(ad => ad._data);
     }
+
     async getAdsWithInsights(adSetId, fieldFilter) {
         const ads = await this.getAdsByAdSet(adSetId);
         return Promise.all(
@@ -93,17 +101,17 @@ class MetaApiService {
         const insights = await new this.Ad(adId).getInsights(AdInsightsFields, fieldFilter);
         return insights.map(insight => insight._data);
     }
+
     async getCampaignInsights(campaignId, fieldFilter) {
-        const insights = await new this.Campaign(campaignId).getInsights(AdInsightsFields, fieldFilter);
+        const insights = await new this.Campaign(campaignId).getInsights(
+            AdInsightsFields,
+            fieldFilter
+        );
         return insights.map(insight => insight._data);
     }
+
     async getAdSetsInsights(adSetId, fieldFilter) {
         const insights = await new this.AdSet(adSetId).getInsights(AdInsightsFields, fieldFilter);
-        console.log(insights)
-        return insights.map(insight => insight._data);
-    }
-    async getAdInsights(adId, fieldFilter) {
-        const insights = await new this.Ad(adId).getInsights(AdInsightsFields, fieldFilter);
         return insights.map(insight => insight._data);
     }
 
@@ -122,7 +130,7 @@ class MetaApiService {
             return businessAccounts.map(acc => acc._data);
         } catch (err) {
             console.error("getUserBusinessAccounts", err);
-            return null;
+            return [];
         }
     }
 
@@ -143,6 +151,30 @@ class MetaApiService {
         } catch (err) {
             console.error("getInsightsByIdAndFieldsAndParam", err);
             return null;
+        }
+    }
+    async getAdPreview(adId) {
+        try {
+            const preview = await new this.Ad(adId).getPreviews([], {
+                ad_format: 'MOBILE_FEED_STANDARD' //DESKTOP_FEED_STANDARD
+            });
+            return preview[0]._data.body;
+        } catch (err) {
+            console.error("getAdPreview", );
+            const code = err.response.code;
+            const message = code === 80004 ? "Too many request!" : code === 190 ? "Auth error!" : "Something went wrong"
+            return message;
+        }
+    }
+    async getAdPreviewIcon(adId) {
+        try {
+            const adCreatives = await new this.Ad(adId).getAdCreatives(["thumbnail_url"]);
+            return adCreatives[0]._data.thumbnail_url;
+        } catch (err) {
+            console.error("getAdPreview", );
+            const code = err
+            console.log(err )
+            return err;
         }
     }
 }

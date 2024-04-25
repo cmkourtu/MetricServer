@@ -2,55 +2,45 @@
 
 module.exports = {
     up: async (queryInterface, Sequelize) => {
-        await queryInterface.createTable("FacebookAccounts", {
+        await queryInterface.createTable("ReportInsights", {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV1,
                 allowNull: false,
                 primaryKey: true,
             },
-            userId: {
+            reportId: {
                 type: Sequelize.UUID,
                 allowNull: false,
                 references: {
-                    model: "Users",
+                    model: "Reports",
                     key: "id",
                 },
                 onUpdate: "CASCADE",
                 onDelete: "CASCADE",
             },
-            accessToken: {
-                type: Sequelize.STRING(300),
+            insight: {
+                type: Sequelize.TEXT,
                 allowNull: false,
             },
-            accessTokenReceiveTime: {
-                type: Sequelize.DATE,
-                allowNull: false,
-            },
-            facebookId: {
-                type: Sequelize.BIGINT,
-                allowNull: false,
-            },
-            firstName: {
-                type: Sequelize.STRING,
-                allowNull: false,
-            },
-            lastName: {
+            type: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
             createdAt: {
                 allowNull: false,
                 type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
             },
             updatedAt: {
                 allowNull: false,
                 type: Sequelize.DATE,
+                defaultValue: Sequelize.NOW,
             },
         });
     },
 
     down: async (queryInterface, Sequelize) => {
-        await queryInterface.dropTable("FacebookAccounts");
+        await queryInterface.dropTable("ReportInsights");
     },
 };
